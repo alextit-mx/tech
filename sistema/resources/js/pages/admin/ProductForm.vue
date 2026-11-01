@@ -216,8 +216,26 @@ function removeImage(id: number) {
                         class="rounded border p-2"
                     >
                         <option>aire</option>
-                        <option>líquida</option></select
-                    ><div v-else-if="key === 'sockets' || key === 'form_factors'" class="flex flex-wrap gap-3"><label v-for="option in (key === 'sockets' ? ['AM4','AM5','LGA1700','LGA1851'] : ['ATX','mATX','ITX'])" :key="option" class="flex items-center gap-1"><input v-model="form.specs[key]" type="checkbox" :value="option" />{{ option }}</label></div><input
+                        <option>líquida</option>
+                    </select>
+                    <div
+                        v-else-if="key === 'sockets' || key === 'form_factors'"
+                        class="flex flex-wrap gap-3"
+                    >
+                        <label
+                            v-for="option in key === 'sockets'
+                                ? ['AM4', 'AM5', 'LGA1700', 'LGA1851']
+                                : ['ATX', 'mATX', 'ITX']"
+                            :key="option"
+                            class="flex items-center gap-1"
+                            ><input
+                                v-model="form.specs[key]"
+                                type="checkbox"
+                                :value="option"
+                            />{{ option }}</label
+                        >
+                    </div>
+                    <input
                         v-else
                         v-model="form.specs[key]"
                         :type="

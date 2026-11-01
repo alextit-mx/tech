@@ -7,6 +7,8 @@ import {
     Factory,
     Users,
     Settings,
+    FileText,
+    Contact,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -22,11 +24,13 @@ import {
 const page = usePage<any>();
 const links = [
     { title: 'Inicio', href: '/admin', icon: LayoutDashboard },
+    { title: 'Cotizaciones', href: '/admin/quotes', icon: FileText },
+    { title: 'Clientes', href: '/admin/customers', icon: Contact },
     { title: 'Productos', href: '/admin/products', icon: Boxes },
-    { title: 'Categorías', href: '/admin/categories', icon: Tags },
     { title: 'Marcas', href: '/admin/brands', icon: Factory },
     ...(page.props.auth?.user?.role === 'owner'
         ? [
+              { title: 'Categorías', href: '/admin/categories', icon: Tags },
               { title: 'Usuarios', href: '/admin/users', icon: Users },
               {
                   title: 'Configuración',

@@ -9,7 +9,15 @@ import { defineConfig, lazyPlugins } from 'vite-plus';
 export default defineConfig({
     plugins: lazyPlugins(() => [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.ts'],
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.ts',
+                // Sitio público (Blade): cada página carga solo lo suyo.
+                'resources/js/site/main.js',
+                'resources/js/site/pages/home.js',
+                'resources/js/site/pages/cart.js',
+                'resources/js/builder/main.ts',
+            ],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {
@@ -53,6 +61,8 @@ export default defineConfig({
             'resources/js/components/ui/*',
             'resources/js/routes/**',
             'resources/js/wayfinder/**',
+            // JS del sitio portado de ../sitio (sin tipos).
+            'resources/js/site/**',
         ],
         options: {
             denyWarnings: true,
@@ -71,6 +81,9 @@ export default defineConfig({
             'composer.json',
             'resources/js/components/ui/*',
             'resources/views/mail/*',
+            'resources/js/site/**',
+            'resources/css/site.css',
+            'resources/css/shop.css',
         ],
         sortTailwindcss: {
             functions: ['clsx', 'cn', 'cva'],

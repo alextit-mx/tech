@@ -37,6 +37,11 @@ class User extends Authenticatable
         return $this->role === 'owner';
     }
 
+    public function quotes(): HasMany
+    {
+        return $this->hasMany(Quote::class);
+    }
+
     public function priceChanges(): HasMany
     {
         return $this->hasMany(PriceChange::class);

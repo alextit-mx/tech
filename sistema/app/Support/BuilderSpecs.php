@@ -15,6 +15,20 @@ class BuilderSpecs
         'case' => ['form_factors' => 'list', 'max_gpu_length_mm' => 'integer'],
     ];
 
+    public const LABELS = [
+        'socket' => 'Socket', 'cores' => 'Núcleos', 'threads' => 'Hilos', 'tdp_w' => 'Consumo (W)', 'igpu' => 'Gráficos integrados',
+        'tier' => 'Nivel', 'memory_type' => 'Tipo de memoria', 'form_factor' => 'Formato', 'm2_slots' => 'Ranuras M.2',
+        'capacity_gb' => 'Capacidad (GB)', 'modules' => 'Módulos', 'speed_mhz' => 'Velocidad (MHz)', 'vram_gb' => 'Memoria de video (GB)',
+        'length_mm' => 'Largo (mm)', 'type' => 'Tipo', 'watts' => 'Potencia (W)', 'certification' => 'Certificación',
+        'sockets' => 'Sockets compatibles', 'max_tdp_w' => 'Disipa hasta (W)', 'form_factors' => 'Formatos de tarjeta madre',
+        'max_gpu_length_mm' => 'Tarjeta de video hasta (mm)',
+    ];
+
+    public static function label(string $key): string
+    {
+        return self::LABELS[$key] ?? ucfirst(str_replace('_', ' ', $key));
+    }
+
     public static function valid(?string $slot, mixed $specs): bool
     {
         if (! is_array($specs)) {

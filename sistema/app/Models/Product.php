@@ -40,6 +40,28 @@ class Product extends Model
         return $this->hasMany(PriceChange::class)->latest();
     }
 
+    /** Precio para el público: null si el producto se cotiza. */
+    public function publicPrice(): ?float
+    {
+        return $this->price_mode === 'show' && $this->price !== null ? (float) $this->price : null;
+    }
+
+    public function stockLabel(): string
+    {
+        return match (true) {
+            $this->stock > 3 => 'En existencia',
+            $this->stock > 0 => 'Últimas piezas',
+            default => 'Sobre pedido',
+        };
+    }
+
+    public function imageUrl(): ?string
+    {
+        $path = $this->images->first()?->path;
+
+        return $path ? asset('uploads/'.$path) : null;
+    }
+
     public function costInMxn(): ?float
     {
         return $this->cost === null ? null : (float) $this->cost * ($this->cost_currency === 'USD' ? (float) setting('exchange_rate', 1) : 1);
