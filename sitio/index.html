@@ -1,0 +1,234 @@
+<!doctype html>
+<!--
+    Tech Computer · sitio completo (inicio).
+    Usa módulos desde CDN: ábrelo con un servidor, no con doble clic.
+      python3 -m http.server 8765   →   http://localhost:8765/sitio/
+-->
+<html lang="es-MX">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tech Computer | PCs gamer, componentes y servicio técnico en Plaza de la Tecnología</title>
+<meta name="description" content="Venta de PCs gamer y componentes, armado a la medida, mantenimiento, reparación y asesoría en Plaza de la Tecnología, Centro de la Ciudad de México. Arma tu PC en línea y cotiza por WhatsApp." />
+<meta name="theme-color" content="#070608" />
+<meta property="og:title" content="Tech Computer · PCs gamer en Plaza de la Tecnología" />
+<meta property="og:description" content="Arma tu PC, compra componentes y lleva tu equipo a mantenimiento o reparación." />
+<meta property="og:image" content="assets/img/ats-computer.png" />
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/site.css" />
+<script>document.documentElement.classList.add("js");</script>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/",
+        "gsap": "https://esm.sh/gsap@3.12.5",
+        "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+        "lenis": "https://unpkg.com/lenis@1.1.0/dist/lenis.mjs"
+    }
+}
+</script>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+<canvas id="scene" aria-hidden="true"></canvas>
+<img class="fallback-emblem" src="assets/img/ats-emblema.png" alt="" />
+
+<header class="site-header">
+    <a class="brand" href="index.html"><img src="assets/img/ats-computer.png" alt="Tech Computer, inicio" width="300" height="117" /></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
+    <nav class="site-nav" id="nav" aria-label="Principal">
+        <a href="equipos.html">Equipos y componentes</a>
+        <a href="arma-tu-pc.html">Arma tu PC</a>
+        <a href="servicio-tecnico.html">Servicio técnico</a>
+        <a href="asesoria.html">Asesoría</a>
+        <a href="contacto.html">Contacto</a>
+    </nav>
+    <a class="btn btn-primary btn-sm btn-whats" data-whats="Hola Tech Computer" href="https://wa.me/525549114435">
+        WhatsApp
+        <span class="ic"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span></span>
+    </a>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-copy">
+            <div class="post" aria-label="Tu PC: procesador, tarjeta de video y memoria listos">
+                <div class="row"><span class="label">Procesador</span><span class="ok">listo</span></div>
+                <div class="row"><span class="label">Tarjeta de video</span><span class="ok">lista</span></div>
+                <div class="row"><span class="label">Memoria RAM</span><span class="ok">lista</span></div>
+                <div class="row"><span class="label">Tu próxima PC</span><span class="bar"><i></i></span><span class="pct">0%</span><span class="cursor"></span></div>
+            </div>
+            <h1>
+                <span class="line"><span>Tu próxima PC gamer</span></span>
+                <span class="line"><span>se arma aquí.</span></span>
+            </h1>
+            <p class="lede">Equipos y componentes, armado a la medida, mantenimiento, reparación y asesoría en nuestro local de Plaza de la Tecnología.</p>
+            <div class="actions">
+                <a class="btn btn-primary" href="arma-tu-pc.html">
+                    Arma tu PC
+                    <span class="ic"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/cpu.svg')"></span></span>
+                </a>
+                <a class="btn btn-ghost" data-whats="Hola Tech Computer, quiero cotizar una PC gamer" href="https://wa.me/525549114435">
+                    Cotizar por WhatsApp
+                    <span class="ic"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="que-hacemos">
+        <h2>Todo lo que tu PC necesita, en un solo local</h2>
+        <p class="intro">Vendemos, armamos, cuidamos y reparamos computadoras, con gente que juega y sabe lo que cada pieza aporta.</p>
+        <ul class="sheet">
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/monitor.svg')"></span></span>
+                <h3>Equipos y componentes</h3>
+                <div><p>PCs gamer completas, procesadores, tarjetas de video, memoria, almacenamiento y periféricos.</p><a class="more" href="equipos.html">Ver equipos y componentes</a></div>
+            </li>
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/cpu.svg')"></span></span>
+                <h3>Armado a la medida</h3>
+                <div><p>Elige tus piezas con nuestro configurador o con nosotros; te la entregamos armada, probada y con Windows listo.</p><a class="more" href="arma-tu-pc.html">Arma tu PC</a></div>
+            </li>
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/fan.svg')"></span></span>
+                <h3>Mantenimiento</h3>
+                <div><p>Limpieza a fondo, pasta térmica nueva y revisión de temperaturas para que no se caliente ni haga ruido.</p><a class="more" href="servicio-tecnico.html#mantenimiento">Ver mantenimiento</a></div>
+            </li>
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/wrench.svg')"></span></span>
+                <h3>Reparación</h3>
+                <div><p>No enciende, se apaga, no da video o se traba: encontramos la falla y te decimos cómo resolverla.</p><a class="more" href="servicio-tecnico.html#reparacion">Ver reparación</a></div>
+            </li>
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/rocket.svg')"></span></span>
+                <h3>Actualización</h3>
+                <div><p>Más memoria, un SSD NVMe o una tarjeta de video nueva para que tu equipo actual rinda más.</p><a class="more" href="servicio-tecnico.html#actualizacion">Ver actualizaciones</a></div>
+            </li>
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/messages-square.svg')"></span></span>
+                <h3>Asesoría</h3>
+                <div><p>Te ayudamos a decidir qué comprar según lo que juegas o haces, sin venderte de más.</p><a class="more" href="asesoria.html">Pedir asesoría</a></div>
+            </li>
+        </ul>
+    </section>
+
+    <section class="section split" id="arma">
+        <div>
+            <h2>Arma tu PC pieza por pieza</h2>
+            <p class="intro">Dinos para qué la quieres y cuánto quieres invertir. Te proponemos una PC completa con componentes actuales, revisamos que todo sea compatible y la mandas por WhatsApp para cotizarla.</p>
+            <div class="actions">
+                <a class="btn btn-primary" href="arma-tu-pc.html">
+                    Abrir el configurador
+                    <span class="ic"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/sliders-horizontal.svg')"></span></span>
+                </a>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="core">
+                <h3>Ejemplo: PC para jugar en 1440p</h3>
+                <div class="post" id="sample" aria-label="Ejemplo de PC recomendada"></div>
+                <a class="more" href="arma-tu-pc.html?uso=gaming1440&amp;presupuesto=equilibrada">Ajustarla a mi gusto</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="niveles">
+        <h2>PCs gamer por nivel</h2>
+        <p class="intro">Cuatro puntos de partida con piezas actuales. Ábrelos en el configurador para cambiar lo que quieras.</p>
+        <ol class="tiers" id="tiers"></ol>
+    </section>
+
+    <section class="section" id="proceso">
+        <h2>Así armamos tu PC</h2>
+        <ol class="steps">
+            <li><h3>Elegimos contigo</h3><p>Con el configurador o en el local, según tus juegos, tus programas y tu presupuesto.</p></li>
+            <li><h3>Revisamos y cotizamos</h3><p>Confirmamos compatibilidad y existencias, y te pasamos el precio del día.</p></li>
+            <li><h3>Armamos</h3><p>Montaje, cableado ordenado y flujo de aire pensado para que no se caliente.</p></li>
+            <li><h3>Probamos y entregamos</h3><p>Windows y controladores instalados, pruebas de temperatura y rendimiento antes de entregarla.</p></li>
+        </ol>
+    </section>
+</main>
+
+<section class="cta-band">
+    <h2>¿Ya sabes qué quieres? Mándanos tu lista o visítanos.</h2>
+    <div class="actions">
+        <a class="btn btn-primary" data-whats="Hola Tech Computer, quiero cotizar" href="https://wa.me/525549114435">
+            Cotizar por WhatsApp
+            <span class="ic"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span></span>
+        </a>
+        <a class="btn btn-ghost" href="contacto.html">
+            Cómo llegar
+            <span class="ic"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/map-pin.svg')"></span></span>
+        </a>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div>
+        <img src="assets/img/ats-computer.png" alt="Tech Computer" width="300" height="117" />
+        <p>PCs gamer, componentes, servicio técnico y asesoría en Plaza de la Tecnología, Centro de la Ciudad de México.</p>
+    </div>
+    <nav aria-label="Sitio">
+        <a href="equipos.html">Equipos y componentes</a>
+        <a href="arma-tu-pc.html">Arma tu PC</a>
+        <a href="servicio-tecnico.html">Servicio técnico</a>
+        <a href="asesoria.html">Asesoría</a>
+        <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="reach">
+        <a data-whats="Hola Tech Computer" href="https://wa.me/525549114435">WhatsApp 55 4911 4435</a>
+        <a href="mailto:techcomputerlocal64@gmail.com">techcomputerlocal64@gmail.com</a>
+        <span>República de Uruguay 9, entrada 1, planta baja, locales 64 y 60</span>
+    </div>
+    <div class="legal"><span>Tech Computer ATS SA de CV, RFC TCA240830IM3</span><span>www.techcomputer.com.mx</span></div>
+</footer>
+
+<script type="module" src="assets/js/site.js"></script>
+<script type="module">
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
+import { mountEmblem } from "./assets/js/emblem.js";
+import { byId, recommend } from "./assets/js/armado.js";
+import { GAMING, renderTiers } from "./assets/js/niveles.js";
+
+gsap.registerPlugin(ScrollTrigger);
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const mobile = window.matchMedia("(max-width: 860px)").matches;
+
+/* Niveles y el ejemplo del configurador salen del mismo motor. */
+renderTiers(document.getElementById("tiers"), GAMING);
+const sample = recommend("gaming1440", "equilibrada");
+document.getElementById("sample").innerHTML = [
+    ["cpu", "Procesador"], ["gpu", "Tarjeta de video"], ["ram", "Memoria"], ["storage", "Almacenamiento"], ["psu", "Fuente"],
+].map(([id, label]) => `<div class="row"><span class="label">${label}</span><span class="ok">${byId(id, sample[id]).name}</span></div>`).join("");
+
+/* Scroll suave. */
+if (!reduced) {
+    const lenis = new Lenis({ lerp: 0.09 });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+}
+
+/* Arranque: la página en construcción iba en 72 %; aquí ya llega a 100 %. */
+const rows = gsap.utils.toArray(".hero .post .row");
+const pct = document.querySelector(".hero .post .pct");
+const progress = { value: 0 };
+gsap.timeline({ defaults: { ease: "power3.out" } })
+    .to(rows, { opacity: 1, y: 0, duration: 0.45, stagger: reduced ? 0 : 0.24 }, reduced ? 0 : 0.4)
+    .to(".hero .post .bar i", { width: "100%", duration: reduced ? 0 : 1.5, ease: "power2.inOut" }, reduced ? 0 : 1.3)
+    .to(progress, { value: 100, duration: reduced ? 0 : 1.5, ease: "power2.inOut", onUpdate: () => (pct.textContent = `${Math.round(progress.value)}%`) }, "<")
+    .to(".hero h1 .line span", { y: "0%", duration: reduced ? 0 : 1.1, stagger: 0.12, ease: "expo.out" }, reduced ? 0 : 1.5)
+    .to(".hero .lede", { opacity: 1, duration: 0.8 }, "-=0.6")
+    .to(".hero .actions", { opacity: 1, duration: 0.8 }, "-=0.5");
+
+mountEmblem({ canvas: document.getElementById("scene"), src: "assets/img/ats-emblema.png", scatterTrigger: "#que-hacemos", reduced, mobile });
+</script>
+</body>
+</html>

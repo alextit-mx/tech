@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Composer con PHP 8.3 en Docker. Uso: bin/composer require vendor/paquete
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+exec "$ROOT/bin/php" /usr/bin/composer "$@"

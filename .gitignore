@@ -1,0 +1,6 @@
+# Registros y respuestas de Codex (los encargos sí se versionan)
+.delegate/*.log
+.delegate/*.result.md
+
+# Copias comprimidas de assets/
+*.zip

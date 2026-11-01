@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# PHP 8.3 en Docker (en WSL no hay PHP instalado). Uso: bin/php artisan migrate
+# Imagen: docker build -t techcomputer-php:8.3 ../docker/php
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TTY=""; [ -t 0 ] && [ -t 1 ] && TTY="-t"
+mkdir -p "$HOME/.cache/composer"
+exec docker run --rm -i $TTY --network host -u "$(id -u):$(id -g)" \
+    -e COMPOSER_HOME=/tmp/composer -v "$HOME/.cache/composer":/tmp/composer/cache \
+    -v "$ROOT":/app -w /app techcomputer-php:8.3 php "$@"

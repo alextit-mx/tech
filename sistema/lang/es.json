@@ -1,0 +1,5 @@
+{
+    "The provided credentials do not match our records.": "El correo o la contraseña no son correctos.",
+    "Too Many Attempts.": "Demasiados intentos. Inténtalo de nuevo en :seconds segundos.",
+    "Unauthenticated.": "Inicia sesión para continuar."
+}

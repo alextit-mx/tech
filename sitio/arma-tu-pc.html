@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Arma tu PC | Tech Computer</title>
+<meta name="description" content="Configurador de PC gamer: elige para qué la quieres y tu presupuesto, te recomendamos componentes actuales compatibles y la cotizas por WhatsApp." />
+<meta name="theme-color" content="#070608" />
+<meta property="og:title" content="Arma tu PC · Tech Computer" />
+<meta property="og:description" content="Elige tus componentes, revisa la compatibilidad y cotiza tu PC gamer." />
+<meta property="og:image" content="assets/img/ats-computer.png" />
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/site.css" />
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+
+<header class="site-header">
+    <a class="brand" href="index.html"><img src="assets/img/ats-computer.png" alt="Tech Computer, inicio" width="300" height="117" /></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
+    <nav class="site-nav" id="nav" aria-label="Principal">
+        <a href="equipos.html">Equipos y componentes</a>
+        <a href="arma-tu-pc.html" aria-current="page">Arma tu PC</a>
+        <a href="servicio-tecnico.html">Servicio técnico</a>
+        <a href="asesoria.html">Asesoría</a>
+        <a href="contacto.html">Contacto</a>
+    </nav>
+    <a class="btn btn-primary btn-sm btn-whats" data-whats="Hola Tech Computer" href="https://wa.me/525549114435">
+        WhatsApp
+        <span class="ic"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span></span>
+    </a>
+</header>
+
+<main class="page">
+    <div class="page-head">
+        <h1>Arma tu PC</h1>
+        <p class="lede">Elige para qué la quieres y cuánto quieres invertir: te proponemos una PC completa con componentes actuales. Cambia cualquier pieza y te avisamos si algo no es compatible. Al final, mándala por WhatsApp y te la cotizamos con existencias y precio del día.</p>
+    </div>
+
+    <form class="picker" onsubmit="return false">
+        <fieldset>
+            <legend>¿Para qué la quieres?</legend>
+            <div class="chips" id="uses"></div>
+        </fieldset>
+        <fieldset>
+            <legend>¿Cuánto quieres invertir?</legend>
+            <div class="chips" id="budgets"></div>
+        </fieldset>
+        <p class="hint" id="hint" aria-live="polite"></p>
+        <div>
+            <button class="btn btn-ghost btn-plain" type="button" id="apply">Armar la recomendada</button>
+        </div>
+    </form>
+
+    <div class="builder" id="builder">
+        <noscript><p class="muted">El configurador necesita JavaScript. Escríbenos por WhatsApp al 55 4911 4435 y armamos tu PC contigo.</p></noscript>
+    </div>
+
+    <p class="small footnote">
+        El consumo y el rendimiento son estimados para orientarte. Las marcas y modelos de tarjeta madre, memoria, almacenamiento, fuente,
+        enfriamiento y gabinete se eligen al cotizar, según existencias.
+    </p>
+</main>
+
+<footer class="site-footer">
+    <div>
+        <img src="assets/img/ats-computer.png" alt="Tech Computer" width="300" height="117" />
+        <p>PCs gamer, componentes, servicio técnico y asesoría en Plaza de la Tecnología, Centro de la Ciudad de México.</p>
+    </div>
+    <nav aria-label="Sitio">
+        <a href="equipos.html">Equipos y componentes</a>
+        <a href="arma-tu-pc.html">Arma tu PC</a>
+        <a href="servicio-tecnico.html">Servicio técnico</a>
+        <a href="asesoria.html">Asesoría</a>
+        <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="reach">
+        <a data-whats="Hola Tech Computer" href="https://wa.me/525549114435">WhatsApp 55 4911 4435</a>
+        <a href="mailto:techcomputerlocal64@gmail.com">techcomputerlocal64@gmail.com</a>
+        <span>República de Uruguay 9, entrada 1, planta baja, locales 64 y 60</span>
+    </div>
+    <div class="legal"><span>Tech Computer ATS SA de CV, RFC TCA240830IM3</span><span>www.techcomputer.com.mx</span></div>
+</footer>
+
+<script type="module" src="assets/js/site.js"></script>
+<script type="module" src="assets/js/configurador.js"></script>
+</body>
+</html>

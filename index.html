@@ -1,0 +1,568 @@
+<!doctype html>
+<!--
+    Tech Computer · página temporal (sitio en construcción).
+    Usa módulos desde CDN: ábrela con un servidor, no con doble clic.
+      python -m http.server 8765   →   http://localhost:8765/
+-->
+<html lang="es-MX">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tech Computer | PCs gamer en Plaza de la Tecnología</title>
+<meta name="description" content="Venta, ensamble, mantenimiento y actualización de computadoras gamer en Plaza de la Tecnología, Ciudad de México. Nuestro sitio está en construcción: cotiza por WhatsApp." />
+<meta name="theme-color" content="#070608" />
+<meta property="og:title" content="Tech Computer · PCs gamer" />
+<meta property="og:description" content="Venta, ensamble, mantenimiento y actualización de PCs gamer. Plaza de la Tecnología, CDMX." />
+<meta property="og:image" content="assets/ats-computer.png" />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+    --red: #E30613;
+    --red-deep: #7A0710;
+    --ink: #070608;
+    --steel: #A9B0BA;
+    --steel-dim: #6E7480;
+    --paper: #F3F1F0;
+    --line: rgba(255, 255, 255, 0.09);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--ink); }
+body {
+    font-family: "Barlow", system-ui, sans-serif;
+    color: var(--paper);
+    background: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* Fondo: brillo rojo como un gabinete con LEDs y malla hexagonal. */
+.backdrop {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+        radial-gradient(60vmax 50vmax at 72% 42%, rgba(227, 6, 19, 0.22), transparent 62%),
+        radial-gradient(50vmax 40vmax at 8% 100%, rgba(122, 7, 16, 0.35), transparent 70%),
+        var(--ink);
+}
+.backdrop::after {
+    content: ""; position: absolute; inset: 0; opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 1 55 16.5v31L28 63 1 47.5v-31Z M28 63v34' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 56px 97px;
+    mask-image: radial-gradient(70vmax 60vmax at 70% 40%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(70vmax 60vmax at 70% 40%, #000 20%, transparent 75%);
+}
+/* "screen": el negro del lienzo deja ver el fondo; las partículas suman luz. */
+#scene { position: fixed; inset: 0; z-index: 1; width: 100vw; height: 100vh; display: block; pointer-events: none; mix-blend-mode: screen; }
+.fallback-emblem { display: none; position: fixed; right: 9vw; top: 50%; width: min(34vw, 380px); transform: translateY(-50%); z-index: 1; filter: drop-shadow(0 0 40px rgba(227, 6, 19, 0.5)); }
+.no-webgl .fallback-emblem { display: block; }
+
+main, header, footer { position: relative; z-index: 2; }
+
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; border-radius: 6px; }
+
+/* Barra superior: flotante, no pegada al borde. */
+.topbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: clamp(18px, 3vw, 36px) clamp(20px, 5vw, 72px);
+}
+.topbar img { height: clamp(40px, 4.4vw, 58px); width: auto; display: block; }
+.topbar .phone { font-family: "Chakra Petch", sans-serif; font-weight: 600; font-size: 15px; text-decoration: none; color: var(--steel); letter-spacing: 0.02em; transition: color 0.3s var(--ease); }
+.topbar .phone:hover { color: var(--paper); }
+
+/* Portada */
+.hero {
+    position: relative;
+    min-height: 100dvh;
+    display: grid; align-items: center;
+    padding: 120px clamp(20px, 5vw, 72px) 96px;
+}
+.hero-copy { position: relative; max-width: 760px; }
+
+.post {
+    font-family: "Chakra Petch", sans-serif; font-weight: 500;
+    font-size: 14px; color: var(--steel); line-height: 1.75;
+    margin-bottom: 28px;
+}
+.post .row { display: flex; gap: 10px; opacity: 0; transform: translateY(6px); }
+.post .ok { color: #3BE07A; }
+.post .label { min-width: 132px; }
+.post .bar { position: relative; flex: 0 0 160px; height: 6px; margin-top: 10px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.post .bar i { position: absolute; inset: 0 auto 0 0; width: 0%; border-radius: 3px; background: linear-gradient(90deg, var(--red-deep), var(--red)); box-shadow: 0 0 12px rgba(227, 6, 19, 0.8); }
+.post .pct { color: var(--paper); min-width: 3ch; }
+.cursor { display: inline-block; width: 9px; height: 15px; margin-left: 4px; background: var(--red); vertical-align: -2px; animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+h1 {
+    font-family: "Chakra Petch", sans-serif; font-weight: 700;
+    font-size: clamp(38px, 4.9vw, 72px); line-height: 1.04; letter-spacing: -0.02em;
+    text-wrap: balance;
+}
+h1 .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+h1 .line span { display: block; transform: translateY(105%); }
+.lede { margin-top: 24px; max-width: 46ch; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.55; color: var(--steel); opacity: 0; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; opacity: 0; }
+.btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: "Chakra Petch", sans-serif; font-weight: 600; font-size: 16px;
+    text-decoration: none; border-radius: 999px; padding: 8px 8px 8px 24px;
+    transition: transform 0.4s var(--ease), background-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.btn:active { transform: scale(0.97); }
+.btn .ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; transition: transform 0.4s var(--ease); }
+.btn:hover .ic { transform: translateX(2px) rotate(-8deg); }
+.btn-primary { background: var(--red); color: #fff; box-shadow: 0 18px 40px -16px rgba(227, 6, 19, 0.9); }
+.btn-primary:hover { background: #F2101E; box-shadow: 0 22px 50px -14px rgba(227, 6, 19, 1); }
+.btn-primary .ic { background: rgba(0, 0, 0, 0.22); }
+.btn-ghost { color: var(--paper); background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px var(--line); padding-right: 8px; }
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.09); }
+.btn-ghost .ic { background: rgba(255, 255, 255, 0.07); }
+.mask { display: block; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--icon) center / contain no-repeat; mask: var(--icon) center / contain no-repeat; }
+
+.scroll-hint { position: absolute; left: clamp(20px, 5vw, 72px); bottom: 28px; font-size: 13px; color: var(--steel-dim); display: flex; align-items: center; gap: 10px; opacity: 0; }
+.scroll-hint i { width: 1px; height: 34px; background: linear-gradient(var(--red), transparent); display: block; }
+
+/* Qué hacemos: como la hoja de armado de una PC. */
+.build { padding: 18vh clamp(20px, 5vw, 72px) 10vh; }
+.build h2, .visit h2 { font-family: "Chakra Petch", sans-serif; font-weight: 700; font-size: clamp(30px, 4vw, 52px); letter-spacing: -0.01em; line-height: 1.08; max-width: 16ch; }
+.build .intro { margin-top: 16px; color: var(--steel); font-size: 18px; max-width: 52ch; line-height: 1.55; }
+.sheet { margin-top: 48px; max-width: 980px; border-top: 1px solid var(--line); }
+.sheet li { list-style: none; display: grid; grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1.4fr); gap: 20px; align-items: center; padding: 26px 0; border-bottom: 1px solid var(--line); }
+.sheet .glyph { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; color: var(--red); background: rgba(227, 6, 19, 0.08); box-shadow: inset 0 0 0 1px rgba(227, 6, 19, 0.25); }
+.sheet .glyph .mask { width: 24px; height: 24px; }
+.sheet h3 { font-family: "Chakra Petch", sans-serif; font-weight: 600; font-size: 22px; }
+.sheet p { color: var(--steel); line-height: 1.55; font-size: 17px; }
+
+/* Visítanos */
+.visit { padding: 10vh clamp(20px, 5vw, 72px) 12vh; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+.visit address { font-style: normal; margin-top: 22px; font-size: 20px; line-height: 1.55; color: var(--paper); }
+.visit address span { color: var(--steel); display: block; font-size: 17px; margin-top: 6px; }
+.contact-list { display: grid; gap: 12px; margin-top: 30px; }
+.contact-list a { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--paper); font-size: 18px; width: fit-content; }
+.contact-list a .mask { color: var(--red); }
+.contact-list a:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 5px; }
+
+.pay { border-radius: 26px; padding: 6px; background: rgba(255, 255, 255, 0.03); box-shadow: inset 0 0 0 1px var(--line); }
+.pay .core { border-radius: 21px; padding: 28px; background: linear-gradient(160deg, rgba(227, 6, 19, 0.10), rgba(255, 255, 255, 0.02) 55%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06); }
+.pay h3 { font-family: "Chakra Petch", sans-serif; font-weight: 600; font-size: 20px; }
+.pay .bank { color: var(--steel); margin-top: 4px; }
+.pay dl { margin-top: 20px; display: grid; gap: 14px; }
+.pay dt { font-size: 14px; color: var(--steel-dim); }
+.pay dd { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-family: "Chakra Petch", sans-serif; font-weight: 600; font-size: 19px; letter-spacing: 0.04em; margin-top: 2px; }
+.copy { flex-shrink: 0; font: 600 13px "Barlow", sans-serif; color: var(--paper); background: rgba(255, 255, 255, 0.07); border: 0; border-radius: 999px; padding: 8px 14px; cursor: pointer; transition: background-color 0.3s var(--ease); }
+.copy:hover { background: rgba(255, 255, 255, 0.13); }
+.copy.done { background: rgba(59, 224, 122, 0.18); color: #7CF0A6; }
+
+footer { padding: 28px clamp(20px, 5vw, 72px) 40px; border-top: 1px solid var(--line); color: var(--steel-dim); font-size: 14px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+
+@media (max-width: 860px) {
+    /* Arriba el emblema completo; abajo el texto. */
+    .hero { align-items: start; padding-top: 47vh; padding-bottom: 96px; }
+    .post { margin-bottom: 20px; }
+    .post .row:not(:last-child) { display: none; }
+    /* En celular el emblema queda arriba; detrás del texto, una sombra para leerlo bien. */
+    .hero-copy::before { content: ""; position: absolute; inset: -48px -24px -36px; z-index: -1; border-radius: 28px; background: linear-gradient(180deg, rgba(7, 6, 8, 0) 0%, rgba(7, 6, 8, 0.78) 24%, rgba(7, 6, 8, 0.9) 100%); }
+    .sheet li { grid-template-columns: 52px minmax(0, 1fr); }
+    .sheet li p { grid-column: 2; }
+    .visit { grid-template-columns: 1fr; }
+    .topbar .phone { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; }
+}
+</style>
+
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/",
+        "gsap": "https://esm.sh/gsap@3.12.5",
+        "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+        "lenis": "https://unpkg.com/lenis@1.1.0/dist/lenis.mjs"
+    }
+}
+</script>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+<canvas id="scene" aria-hidden="true"></canvas>
+<img class="fallback-emblem" src="assets/ats-emblema.png" alt="" />
+
+<header class="topbar">
+    <img src="assets/ats-computer.png" alt="ATS Computer" width="300" height="117" />
+    <a class="phone" href="https://wa.me/525549114435">WhatsApp 55 4911 4435</a>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-copy">
+            <div class="post" aria-label="Sitio en construcción, avance 72 por ciento">
+                <div class="row"><span class="label">Procesador</span><span class="ok">listo</span></div>
+                <div class="row"><span class="label">Tarjeta de video</span><span class="ok">lista</span></div>
+                <div class="row"><span class="label">Memoria RAM</span><span class="ok">lista</span></div>
+                <div class="row"><span class="label">Sitio web</span><span class="bar"><i></i></span><span class="pct">0%</span><span class="cursor"></span></div>
+            </div>
+            <h1>
+                <span class="line"><span>Tu próxima PC gamer</span></span>
+                <span class="line"><span>se está armando aquí.</span></span>
+            </h1>
+            <p class="lede">Estamos construyendo nuestro sitio. Mientras tanto, cotiza, arma o actualiza tu equipo con nosotros por WhatsApp o en nuestro local de Plaza de la Tecnología.</p>
+            <div class="actions">
+                <a class="btn btn-primary" href="https://wa.me/525549114435?text=Hola%20Tech%20Computer%2C%20quiero%20cotizar%20una%20PC%20gamer" target="_blank" rel="noopener">
+                    Cotizar por WhatsApp
+                    <span class="ic"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span></span>
+                </a>
+                <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=Plaza%20de%20la%20Tecnolog%C3%ADa%20Rep%C3%BAblica%20de%20Uruguay%209%20Centro%20Ciudad%20de%20M%C3%A9xico" target="_blank" rel="noopener">
+                    Cómo llegar
+                    <span class="ic"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/map-pin.svg')"></span></span>
+                </a>
+            </div>
+        </div>
+        <div class="scroll-hint" aria-hidden="true"><i></i>Desliza para ver qué hacemos</div>
+    </section>
+
+    <section class="build" id="servicios">
+        <h2>Armamos, mejoramos y cuidamos tu equipo</h2>
+        <p class="intro">Todo lo que tu PC gamer necesita, en un solo lugar y con gente que juega.</p>
+        <ul class="sheet">
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/monitor.svg')"></span></span>
+                <h3>Venta de equipos</h3>
+                <p>PCs gamer completas y componentes: procesadores, tarjetas de video, memoria, almacenamiento y periféricos.</p>
+            </li>
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/cpu.svg')"></span></span>
+                <h3>Ensamble a la medida</h3>
+                <p>Elegimos contigo cada pieza según tus juegos y tu presupuesto, y te la entregamos armada y probada.</p>
+            </li>
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/wrench.svg')"></span></span>
+                <h3>Mantenimiento</h3>
+                <p>Limpieza a fondo, cambio de pasta térmica, revisión de temperaturas y diagnóstico de fallas.</p>
+            </li>
+            <li>
+                <span class="glyph"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/rocket.svg')"></span></span>
+                <h3>Actualización</h3>
+                <p>Más memoria, un SSD NVMe o una tarjeta de video nueva para que tu equipo actual rinda como nuevo.</p>
+            </li>
+        </ul>
+    </section>
+
+    <section class="visit" id="contacto">
+        <div>
+            <h2>Visítanos en Plaza de la Tecnología</h2>
+            <address>
+                República de Uruguay 9, entrada 1, planta baja, locales 64 y 60
+                <span>Centro, Ciudad de México</span>
+            </address>
+            <div class="contact-list">
+                <a href="https://wa.me/525549114435" target="_blank" rel="noopener"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span>55 4911 4435</a>
+                <a href="mailto:techcomputerlocal64@gmail.com"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/mail.svg')"></span>techcomputerlocal64@gmail.com</a>
+                <a href="mailto:aliciatorressegundo@gmail.com"><span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/mail.svg')"></span>aliciatorressegundo@gmail.com</a>
+            </div>
+        </div>
+
+        <div class="pay">
+            <div class="core">
+                <h3>Pago por transferencia</h3>
+                <p class="bank">BBVA a nombre de Tech Computer ATS SA de CV</p>
+                <dl>
+                    <div><dt>Número de cuenta</dt><dd><span>0124218469</span><button class="copy" type="button" data-copy="0124218469">Copiar</button></dd></div>
+                    <div><dt>CLABE interbancaria</dt><dd><span>012180001242184691</span><button class="copy" type="button" data-copy="012180001242184691">Copiar</button></dd></div>
+                </dl>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <span>Tech Computer ATS SA de CV, RFC TCA240830IM3</span>
+    <span>www.techcomputer.com.mx</span>
+</footer>
+
+<p class="sr-only" aria-live="polite" id="copied" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p>
+
+<script type="module">
+import * as THREE from "three";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const mobile = window.matchMedia("(max-width: 860px)").matches;
+const RED = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--red").trim());
+
+/* ---------------- Copiar cuenta y CLABE ---------------- */
+document.querySelectorAll(".copy").forEach((button) => {
+    button.addEventListener("click", async () => {
+        try {
+            await navigator.clipboard.writeText(button.dataset.copy);
+            button.textContent = "Copiado";
+            button.classList.add("done");
+            document.getElementById("copied").textContent = "Copiado al portapapeles";
+            setTimeout(() => { button.textContent = "Copiar"; button.classList.remove("done"); }, 1800);
+        } catch {
+            button.textContent = "Selecciona y copia";
+        }
+    });
+});
+
+/* ---------------- Scroll suave ---------------- */
+let lenis = null;
+if (!reduced) {
+    lenis = new Lenis({ lerp: 0.09 });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+}
+
+/* ---------------- Entrada: el arranque tipo BIOS ---------------- */
+const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+const rows = gsap.utils.toArray(".post .row");
+const pct = document.querySelector(".post .pct");
+const progress = { value: 0 };
+intro
+    .to(rows, { opacity: 1, y: 0, duration: 0.45, stagger: reduced ? 0 : 0.28 }, reduced ? 0 : 0.5)
+    .to(".post .bar i", { width: "72%", duration: reduced ? 0 : 1.6, ease: "power2.inOut" }, reduced ? 0 : 1.5)
+    .to(progress, { value: 72, duration: reduced ? 0 : 1.6, ease: "power2.inOut", onUpdate: () => (pct.textContent = `${Math.round(progress.value)}%`) }, "<")
+    .to("h1 .line span", { y: "0%", duration: reduced ? 0 : 1.1, stagger: 0.12, ease: "expo.out" }, reduced ? 0 : 1.7)
+    .to(".lede", { opacity: 1, duration: 0.8 }, "-=0.6")
+    .to(".actions", { opacity: 1, duration: 0.8 }, "-=0.5")
+    .to(".scroll-hint", { opacity: 1, duration: 0.8 }, "-=0.3");
+
+/* ---------------- Escena 3D: el emblema hecho de partículas ---------------- */
+const canvas = document.getElementById("scene");
+let renderer;
+try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: "high-performance" });
+} catch {
+    document.documentElement.classList.add("no-webgl");
+}
+
+if (renderer) start();
+
+async function start() {
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 9);
+
+    const points = await emblemPoints("assets/ats-emblema.png", mobile ? 5200 : 11000);
+    const count = points.length / 3;
+    const start = new Float32Array(count * 3);
+    const scatter = new Float32Array(count * 3);
+    const delay = new Float32Array(count);
+    const seed = new Float32Array(count);
+
+    for (let i = 0; i < count; i++) {
+        const x = points[i * 3], y = points[i * 3 + 1], z = points[i * 3 + 2];
+        /* Llegan desde una esfera amplia, como piezas que vuelan a su lugar. */
+        const u = Math.random() * 2 - 1, a = Math.random() * Math.PI * 2, r = 7 + Math.random() * 6;
+        const s = Math.sqrt(1 - u * u);
+        start[i * 3] = r * s * Math.cos(a);
+        start[i * 3 + 1] = r * s * Math.sin(a);
+        start[i * 3 + 2] = r * u - 2;
+        /* Vista explotada: hacia afuera desde el centro, con profundidad. */
+        const len = Math.hypot(x, y) + 0.001, push = 1.6 + Math.random() * 3.2;
+        scatter[i * 3] = x + (x / len) * push + (Math.random() - 0.5) * 1.2;
+        scatter[i * 3 + 1] = y + (y / len) * push + (Math.random() - 0.5) * 1.2;
+        scatter[i * 3 + 2] = z + (Math.random() - 0.5) * 7;
+        delay[i] = Math.random() * 0.55 + (y + 2.2) / 4.4 * 0.25;
+        seed[i] = Math.random();
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.BufferAttribute(points, 3));
+    geometry.setAttribute("aStart", new THREE.BufferAttribute(start, 3));
+    geometry.setAttribute("aScatter", new THREE.BufferAttribute(scatter, 3));
+    geometry.setAttribute("aDelay", new THREE.BufferAttribute(delay, 1));
+    geometry.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
+
+    const uniforms = {
+        uTime: { value: 0 },
+        uAssemble: { value: reduced ? 1 : 0 },
+        uScatter: { value: 0 },
+        uSize: { value: mobile ? 22 : 26 },
+        uPixelRatio: { value: renderer.getPixelRatio() },
+        uColor: { value: RED },
+        uHot: { value: new THREE.Color("#FFE6E0") },
+    };
+
+    const material = new THREE.ShaderMaterial({
+        uniforms,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        vertexShader: /* glsl */ `
+            precision mediump float;
+            uniform float uTime, uAssemble, uScatter, uSize, uPixelRatio;
+            attribute vec3 aStart;
+            attribute vec3 aScatter;
+            attribute float aDelay;
+            attribute float aSeed;
+            varying float vHeat;
+            varying float vAlpha;
+
+            float easeOut(float x) { return 1.0 - pow(1.0 - x, 3.0); }
+
+            void main() {
+                float t = clamp((uAssemble - aDelay * 0.55) / 0.45, 0.0, 1.0);
+                float e = easeOut(t);
+                vec3 pos = mix(aStart, position, e);
+                pos += 0.018 * e * vec3(sin(uTime * 1.3 + aSeed * 20.0), cos(uTime * 1.1 + aSeed * 17.0), sin(uTime * 0.9 + aSeed * 13.0));
+                pos = mix(pos, aScatter, smoothstep(0.0, 1.0, uScatter));
+
+                vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+                gl_Position = projectionMatrix * mv;
+                float twinkle = 0.8 + 0.2 * sin(uTime * 3.0 + aSeed * 40.0);
+                gl_PointSize = uSize * uPixelRatio * (0.55 + aSeed * 0.75) * twinkle / -mv.z;
+
+                vHeat = step(0.94, aSeed) * 0.9 + (1.0 - e) * 0.6;
+                vAlpha = (0.25 + 0.75 * e) * (1.0 - uScatter * 0.35);
+            }
+        `,
+        fragmentShader: /* glsl */ `
+            precision mediump float;
+            uniform vec3 uColor;
+            uniform vec3 uHot;
+            varying float vHeat;
+            varying float vAlpha;
+
+            void main() {
+                float d = length(gl_PointCoord - 0.5);
+                float a = smoothstep(0.5, 0.05, d);
+                vec3 color = mix(uColor, uHot, clamp(vHeat, 0.0, 1.0));
+                gl_FragColor = vec4(color, a * vAlpha);
+            }
+        `,
+    });
+
+    const emblem = new THREE.Points(geometry, material);
+    const rig = new THREE.Group();
+    rig.add(emblem);
+    scene.add(rig);
+
+    /* Postproceso: brillo neón. */
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), mobile ? 0.6 : 0.85, 0.55, 0.1);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
+
+    /* Lugar del emblema: a la derecha en escritorio, detrás del texto en celular. */
+    const layout = () => {
+        const wide = window.innerWidth > 860;
+        rig.position.set(wide ? 2.3 * Math.min(1, camera.aspect / 1.6) : 0, wide ? 0.1 : 1.36, 0);
+        rig.scale.setScalar(wide ? 1 : 0.46);
+    };
+    layout();
+
+    window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        composer.setSize(window.innerWidth, window.innerHeight);
+        uniforms.uPixelRatio.value = renderer.getPixelRatio();
+        layout();
+    });
+
+    /* Ensamble al cargar. */
+    if (!reduced) gsap.to(uniforms.uAssemble, { value: 1, duration: 3.2, ease: "power2.inOut", delay: 0.2 });
+
+    /* Al bajar: vista explotada y giro. */
+    const state = { scatter: 0, turn: 0 };
+    if (!reduced) {
+        ScrollTrigger.create({
+            trigger: ".build",
+            start: "top bottom",
+            end: "top 20%",
+            scrub: true,
+            onUpdate: (self) => { state.scatter = self.progress; state.turn = self.progress; },
+        });
+    }
+
+    /* Ratón: el emblema sigue al puntero con suavidad. */
+    const pointer = { x: 0, y: 0 };
+    window.addEventListener("pointermove", (event) => {
+        pointer.x = event.clientX / window.innerWidth - 0.5;
+        pointer.y = event.clientY / window.innerHeight - 0.5;
+    });
+
+    const clock = new THREE.Clock();
+    let visible = true;
+    document.addEventListener("visibilitychange", () => (visible = !document.hidden));
+
+    renderer.setAnimationLoop(() => {
+        const delta = Math.min(clock.getDelta(), 0.05);
+        if (!visible) return;
+        const k = 1 - Math.pow(1 - 0.06, delta * 60);
+        uniforms.uTime.value += delta;
+        uniforms.uScatter.value += (state.scatter - uniforms.uScatter.value) * k;
+        const targetY = pointer.x * 0.5 + state.turn * 0.9 + (reduced ? 0 : Math.sin(uniforms.uTime.value * 0.25) * 0.12);
+        const targetX = pointer.y * 0.3;
+        rig.rotation.y += (targetY - rig.rotation.y) * k;
+        rig.rotation.x += (targetX - rig.rotation.x) * k;
+        composer.render();
+    });
+}
+
+/* Puntos tomados del logo: cada píxel rojo del emblema es una partícula (con algo de grosor). */
+async function emblemPoints(src, max) {
+    const image = new Image();
+    image.src = src;
+    await image.decode();
+
+    const height = 4.4; /* alto del emblema en la escena */
+    const sampleH = mobile ? 150 : 210;
+    const sampleW = Math.round(sampleH * (image.width / image.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = sampleW;
+    canvas.height = sampleH;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    context.drawImage(image, 0, 0, sampleW, sampleH);
+    const data = context.getImageData(0, 0, sampleW, sampleH).data;
+
+    const filled = [];
+    for (let y = 0; y < sampleH; y++) {
+        for (let x = 0; x < sampleW; x++) {
+            if (data[(y * sampleW + x) * 4 + 3] > 140) filled.push(x, y);
+        }
+    }
+
+    const total = filled.length / 2;
+    const step = Math.max(1, total / max);
+    const scale = height / sampleH;
+    const out = [];
+    for (let i = 0; i < total; i += step) {
+        const index = Math.floor(i) * 2;
+        const px = filled[index] + Math.random();
+        const py = filled[index + 1] + Math.random();
+        out.push((px - sampleW / 2) * scale, -(py - sampleH / 2) * scale, (Math.random() - 0.5) * 0.35);
+    }
+
+    return new Float32Array(out);
+}
+</script>
+</body>
+</html>
