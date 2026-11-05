@@ -20,6 +20,13 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             sidebarOpen: boolean;
+            branding: {
+                siteLogo: string;
+                icon: string;
+                favicon: string;
+                appleTouchIcon: string;
+                customSiteLogo: boolean;
+            };
             [key: string]: unknown;
         };
     }

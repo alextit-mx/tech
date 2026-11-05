@@ -1,27 +1,33 @@
 <script setup lang="ts">
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { products as searchQuoteProducts } from '@/actions/App/Http/Controllers/Admin/QuoteController';
+import SearchHighlight from '@/components/SearchHighlight.vue';
+import CustomerPicker from '@/components/CustomerPicker.vue';
+import type { PickedCustomer } from '@/lib/customers';
 
 interface Line {
     product_id: number | null;
     sku: string | null;
     description: string;
+    brand: string | null;
+    model: string | null;
+    warranty: string | null;
     quantity: number;
     unit_price: number | string | null;
     unit_cost?: number | string | null;
     stock?: number;
-}
-interface Customer {
-    id: number;
-    name: string;
-    phone: string | null;
-    email: string | null;
-    rfc: string | null;
+    stock_24h?: number;
+    image?: string;
+    name?: string;
 }
 
 const props = defineProps<{
     quote: any;
-    customer: Customer | null;
+    customer: PickedCustomer | null;
     defaults: { valid_until: string };
     statuses: Record<string, string>;
     sources: Record<string, string>;
@@ -46,6 +52,9 @@ const form = useForm({
     items: (props.quote?.items ?? []).map((i: any) => ({
         product_id: i.product_id,
         sku: i.sku,
+        brand: i.brand ?? '',
+        model: i.model ?? '',
+        warranty: i.warranty ?? '',
         description: i.description,
         quantity: i.quantity,
         unit_price: i.unit_price,
@@ -73,76 +82,80 @@ const total = computed(() =>
 const pending = computed(() => form.items.some((l) => lineTotal(l) === null));
 
 /* ---------------- Cliente ---------------- */
-const customer = ref<Customer | null>(props.customer);
-const customerQuery = ref('');
-const customerResults = ref<Customer[]>([]);
-const newCustomer = ref<{ name: string; phone: string; email: string } | null>(
-    null,
-);
-const customerError = ref('');
-let customerTimer: number | undefined;
-
-function searchCustomers() {
-    window.clearTimeout(customerTimer);
-    customerTimer = window.setTimeout(async () => {
-        if (customerQuery.value.trim().length < 2)
-            return (customerResults.value = []);
-        const res = await fetch(
-            `/admin/customers/lookup?q=${encodeURIComponent(customerQuery.value)}`,
-            { headers: { Accept: 'application/json' } },
-        );
-        customerResults.value = await res.json();
-    }, 220);
-}
-function chooseCustomer(c: Customer) {
-    customer.value = c;
-    form.customer_id = c.id;
-    customerResults.value = [];
-    customerQuery.value = '';
-}
-async function createCustomer() {
-    if (!newCustomer.value) return;
-    customerError.value = '';
-    const token = decodeURIComponent(
-        document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '',
-    );
-    const res = await fetch('/admin/customers', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'X-XSRF-TOKEN': token,
-        },
-        body: JSON.stringify(newCustomer.value),
-    });
-    const data = await res.json();
-    if (!res.ok)
-        return (customerError.value = Object.values(
-            data.errors ?? { e: [data.message] },
-        )
-            .flat()
-            .join(' '));
-    chooseCustomer(data);
-    newCustomer.value = null;
-}
+const customer = ref<PickedCustomer | null>(props.customer);
+watch(customer, (value) => {
+    form.customer_id = value?.id ?? null;
+});
 
 /* ---------------- Productos ---------------- */
 const productQuery = ref('');
 const productResults = ref<Line[]>([]);
+const searching = ref(false);
+const searchError = ref(false);
+const searched = ref(false);
+const activeProduct = ref(-1);
 let productTimer: number | undefined;
+let productAbort: AbortController | undefined;
 
-function searchProducts() {
+function closeProducts() {
     window.clearTimeout(productTimer);
+    productAbort?.abort();
+    productResults.value = [];
+    searching.value = false;
+    searched.value = false;
+    activeProduct.value = -1;
+}
+function searchProducts() {
+    closeProducts();
+    searchError.value = false;
+    const term = productQuery.value.trim();
+    if (term.length < 2) return;
+    searching.value = true;
+    const controller = new AbortController();
+    productAbort = controller;
     productTimer = window.setTimeout(async () => {
-        if (productQuery.value.trim().length < 2)
-            return (productResults.value = []);
-        const res = await fetch(
-            `/admin/quotes/products?q=${encodeURIComponent(productQuery.value)}`,
-            { headers: { Accept: 'application/json' } },
-        );
-        productResults.value = await res.json();
+        try {
+            const res = await fetch(
+                searchQuoteProducts.url({ query: { q: term } }),
+                {
+                    headers: { Accept: 'application/json' },
+                    signal: controller.signal,
+                },
+            );
+            if (!res.ok) throw new Error('search');
+            const results = await res.json();
+            if (controller.signal.aborted) return;
+            productResults.value = results;
+            activeProduct.value = results.length ? 0 : -1;
+            searched.value = true;
+        } catch {
+            if (!controller.signal.aborted) searchError.value = true;
+        } finally {
+            if (!controller.signal.aborted) searching.value = false;
+        }
     }, 220);
 }
+function productKey(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+        closeProducts();
+        return;
+    }
+    if (!productResults.value.length) return;
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        const direction = event.key === 'ArrowDown' ? 1 : -1;
+        activeProduct.value =
+            (activeProduct.value + direction + productResults.value.length) %
+            productResults.value.length;
+        document
+            .getElementById(`quote-product-${activeProduct.value}`)
+            ?.scrollIntoView({ block: 'nearest' });
+    } else if (event.key === 'Enter' && activeProduct.value >= 0) {
+        event.preventDefault();
+        addProduct(productResults.value[activeProduct.value]);
+    }
+}
+onBeforeUnmount(closeProducts);
 function addProduct(p: Line) {
     const existing = form.items.find(
         (l) => l.product_id && l.product_id === p.product_id,
@@ -150,12 +163,15 @@ function addProduct(p: Line) {
     if (existing) existing.quantity++;
     else form.items.push({ ...p, quantity: 1 });
     productQuery.value = '';
-    productResults.value = [];
+    closeProducts();
 }
 function addFree() {
     form.items.push({
         product_id: null,
         sku: null,
+        brand: '',
+        model: '',
+        warranty: '',
         description: '',
         quantity: 1,
         unit_price: null,
@@ -224,7 +240,7 @@ function duplicate() {
                     :href="links.whatsapp"
                     target="_blank"
                     rel="noopener"
-                    class="rounded bg-[#25D366] px-3 py-2 font-semibold text-white"
+                    class="rounded bg-primary px-3 py-2 font-semibold text-primary-foreground"
                     @click="quote.status === 'draft' && setStatus('sent')"
                     >Enviar por WhatsApp</a
                 >
@@ -234,128 +250,33 @@ function duplicate() {
                     class="rounded border px-3 py-2"
                     >Ver como cliente</a
                 >
-                <button class="rounded border px-3 py-2" @click="duplicate">
+                <Button
+                    variant="outline"
+                    class="rounded border px-3 py-2"
+                    @click="duplicate"
+                >
                     Duplicar
-                </button>
+                </Button>
+                <Link
+                    v-if="quote.status === 'accepted'"
+                    :href="`/admin/warranties/create?quote=${quote.id}`"
+                    class="rounded border px-3 py-2"
+                    >Emitir garantía</Link
+                >
             </div>
         </div>
 
-        <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div
+            class="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_340px]"
+        >
             <div class="space-y-6">
                 <!-- Cliente -->
                 <div class="rounded-xl border p-4">
                     <h2 class="mb-3 font-semibold">Cliente</h2>
-                    <div
-                        v-if="customer"
-                        class="flex flex-wrap items-center justify-between gap-2"
-                    >
-                        <div>
-                            <p class="font-semibold">{{ customer.name }}</p>
-                            <p class="text-sm text-muted-foreground">
-                                {{ customer.phone ?? 'Sin teléfono' }}
-                                {{
-                                    customer.email ? `· ${customer.email}` : ''
-                                }}
-                                {{
-                                    customer.rfc ? `· RFC ${customer.rfc}` : ''
-                                }}
-                            </p>
-                        </div>
-                        <button
-                            class="rounded border px-3 py-1 text-sm"
-                            @click="
-                                customer = null;
-                                form.customer_id = null;
-                            "
-                        >
-                            Cambiar
-                        </button>
-                    </div>
-                    <div v-else class="space-y-2">
-                        <div class="relative">
-                            <input
-                                v-model="customerQuery"
-                                placeholder="Buscar por nombre o WhatsApp"
-                                class="w-full rounded-md border px-3 py-2"
-                                @input="searchCustomers"
-                            />
-                            <ul
-                                v-if="customerResults.length"
-                                class="absolute z-10 mt-1 w-full rounded-md border bg-background shadow"
-                            >
-                                <li v-for="c in customerResults" :key="c.id">
-                                    <button
-                                        class="w-full px-3 py-2 text-left hover:bg-muted"
-                                        @click="chooseCustomer(c)"
-                                    >
-                                        {{ c.name }}
-                                        <span class="text-muted-foreground">{{
-                                            c.phone
-                                        }}</span>
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                        <button
-                            v-if="!newCustomer"
-                            class="text-sm underline"
-                            @click="
-                                newCustomer = {
-                                    name: customerQuery,
-                                    phone: '',
-                                    email: '',
-                                }
-                            "
-                        >
-                            + Cliente nuevo
-                        </button>
-                        <div
-                            v-else
-                            class="grid gap-2 rounded-md bg-muted/50 p-3 sm:grid-cols-3"
-                        >
-                            <input
-                                v-model="newCustomer.name"
-                                placeholder="Nombre"
-                                class="rounded-md border px-3 py-2"
-                            />
-                            <input
-                                v-model="newCustomer.phone"
-                                placeholder="WhatsApp (10 dígitos)"
-                                class="rounded-md border px-3 py-2"
-                            />
-                            <input
-                                v-model="newCustomer.email"
-                                placeholder="Correo (opcional)"
-                                class="rounded-md border px-3 py-2"
-                            />
-                            <p
-                                v-if="customerError"
-                                class="text-sm text-red-600 sm:col-span-3"
-                            >
-                                {{ customerError }}
-                            </p>
-                            <div class="flex gap-2 sm:col-span-3">
-                                <button
-                                    class="rounded bg-[#E30613] px-3 py-1.5 text-white"
-                                    @click="createCustomer"
-                                >
-                                    Guardar cliente
-                                </button>
-                                <button
-                                    class="rounded border px-3 py-1.5"
-                                    @click="newCustomer = null"
-                                >
-                                    Cancelar
-                                </button>
-                            </div>
-                        </div>
-                        <p
-                            v-if="form.errors.customer_id"
-                            class="text-sm text-red-600"
-                        >
-                            {{ form.errors.customer_id }}
-                        </p>
-                    </div>
+                    <CustomerPicker
+                        v-model="customer"
+                        :error="form.errors.customer_id"
+                    />
                 </div>
 
                 <!-- Partidas -->
@@ -363,54 +284,137 @@ function duplicate() {
                     <div class="flex flex-wrap items-center gap-2 border-b p-4">
                         <h2 class="mr-auto font-semibold">Partidas</h2>
                         <div class="relative w-full sm:w-96">
-                            <input
+                            <Input
+                                aria-label="Agregar producto"
+                                role="combobox"
+                                aria-autocomplete="list"
+                                aria-controls="quote-product-results"
+                                :aria-expanded="productResults.length > 0"
+                                :aria-activedescendant="
+                                    activeProduct >= 0
+                                        ? `quote-product-${activeProduct}`
+                                        : undefined
+                                "
+                                @keydown="productKey"
+                                @blur="closeProducts"
                                 v-model="productQuery"
-                                placeholder="Agregar producto (nombre o SKU)"
+                                placeholder="Nombre, SKU, modelo o marca"
                                 class="w-full rounded-md border px-3 py-2"
                                 @input="searchProducts"
                             />
-                            <ul
-                                v-if="productResults.length"
-                                class="absolute right-0 z-10 mt-1 max-h-80 w-full overflow-y-auto rounded-md border bg-background shadow"
+                            <div
+                                v-if="searching || searched || searchError"
+                                class="absolute right-0 z-20 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-lg sm:w-[32rem]"
                             >
-                                <li
-                                    v-for="p in productResults"
-                                    :key="p.product_id!"
+                                <p
+                                    v-if="searching"
+                                    role="status"
+                                    class="p-4 text-sm text-muted-foreground"
                                 >
-                                    <button
-                                        class="flex w-full justify-between gap-3 px-3 py-2 text-left hover:bg-muted"
-                                        @click="addProduct(p)"
+                                    Buscando…
+                                </p>
+                                <p
+                                    v-else-if="searchError"
+                                    role="alert"
+                                    class="p-4 text-sm text-destructive"
+                                >
+                                    No se pudo buscar. Intenta de nuevo.
+                                </p>
+                                <p
+                                    v-else-if="!productResults.length"
+                                    role="status"
+                                    class="p-4 text-sm text-muted-foreground"
+                                >
+                                    Sin resultados. Prueba con la marca, el
+                                    modelo o parte del SKU.
+                                </p>
+                                <ul
+                                    v-else
+                                    id="quote-product-results"
+                                    role="listbox"
+                                    aria-label="Productos encontrados"
+                                    class="max-h-96 overflow-y-auto"
+                                >
+                                    <li
+                                        v-for="(p, index) in productResults"
+                                        :id="`quote-product-${index}`"
+                                        :key="p.product_id!"
+                                        role="option"
+                                        :aria-selected="activeProduct === index"
                                     >
-                                        <span
-                                            >{{ p.description }}
-                                            <small class="text-muted-foreground"
-                                                >{{ p.sku }} ·
-                                                {{ p.stock }} pzas</small
-                                            ></span
+                                        <button
+                                            type="button"
+                                            tabindex="-1"
+                                            class="flex w-full items-center gap-3 px-3 py-3 text-left hover:bg-muted"
+                                            :class="{
+                                                'bg-muted':
+                                                    activeProduct === index,
+                                            }"
+                                            @mousedown.prevent
+                                            @click="addProduct(p)"
+                                            @mouseenter="activeProduct = index"
                                         >
-                                        <span
-                                            class="whitespace-nowrap tabular-nums"
-                                            >{{
-                                                p.unit_price === null
-                                                    ? 'Cotizar'
-                                                    : money(
-                                                          Number(p.unit_price),
-                                                      )
-                                            }}</span
-                                        >
-                                    </button>
-                                </li>
-                            </ul>
+                                            <img
+                                                :src="p.image"
+                                                alt=""
+                                                class="h-12 w-12 shrink-0 rounded border bg-muted object-contain"
+                                            />
+                                            <span class="min-w-0 flex-1">
+                                                <SearchHighlight
+                                                    :text="
+                                                        p.name ?? p.description
+                                                    "
+                                                    :query="productQuery"
+                                                    class="block text-sm font-medium"
+                                                />
+                                                <span
+                                                    class="mt-1 block text-xs text-muted-foreground"
+                                                    ><SearchHighlight
+                                                        :text="
+                                                            [
+                                                                p.brand,
+                                                                p.sku,
+                                                                p.model,
+                                                            ]
+                                                                .filter(Boolean)
+                                                                .join(' · ')
+                                                        "
+                                                        :query="productQuery"
+                                                /></span>
+                                                <span
+                                                    class="mt-1 block text-xs text-muted-foreground"
+                                                    >Local: {{ p.stock }} · En
+                                                    24 h:
+                                                    {{ p.stock_24h }}</span
+                                                >
+                                            </span>
+                                            <span
+                                                class="shrink-0 text-sm font-semibold tabular-nums"
+                                                >{{
+                                                    p.unit_price === null
+                                                        ? 'Cotizar'
+                                                        : money(
+                                                              Number(
+                                                                  p.unit_price,
+                                                              ),
+                                                          )
+                                                }}</span
+                                            >
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <button
+                        <Button
+                            variant="outline"
                             class="rounded border px-3 py-2"
                             @click="addFree"
                         >
                             Partida libre
-                        </button>
+                        </Button>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                        <table class="quote-lines w-full text-sm">
                             <thead class="bg-muted text-left">
                                 <tr>
                                     <th class="p-2">Descripción</th>
@@ -433,11 +437,52 @@ function duplicate() {
                                     class="border-t align-top"
                                 >
                                     <td class="p-2">
-                                        <input
+                                        <Input
+                                            aria-label="Descripción"
                                             v-model="l.description"
                                             class="w-full rounded border px-2 py-1"
                                             placeholder="Descripción"
                                         />
+                                        <div
+                                            class="mt-2 grid min-w-72 gap-2 sm:grid-cols-3"
+                                        >
+                                            <label
+                                                v-for="field in [
+                                                    'brand',
+                                                    'model',
+                                                    'warranty',
+                                                ] as const"
+                                                :key="field"
+                                                class="grid gap-1 text-xs text-muted-foreground"
+                                            >
+                                                {{
+                                                    {
+                                                        brand: 'Marca',
+                                                        model: 'Modelo',
+                                                        warranty: 'Garantía',
+                                                    }[field]
+                                                }}
+                                                <Input
+                                                    v-model="l[field]"
+                                                    :aria-label="`${{ brand: 'Marca', model: 'Modelo', warranty: 'Garantía' }[field]} de la partida ${i + 1}`"
+                                                    maxlength="255"
+                                                    class="min-w-0"
+                                                />
+                                                <small
+                                                    v-if="
+                                                        (form.errors as any)[
+                                                            `items.${i}.${field}`
+                                                        ]
+                                                    "
+                                                    class="text-destructive"
+                                                    >{{
+                                                        (form.errors as any)[
+                                                            `items.${i}.${field}`
+                                                        ]
+                                                    }}</small
+                                                >
+                                            </label>
+                                        </div>
                                         <small
                                             v-if="l.sku"
                                             class="text-muted-foreground"
@@ -449,7 +494,7 @@ function duplicate() {
                                                     `items.${i}.description`
                                                 ]
                                             "
-                                            class="text-xs text-red-600"
+                                            class="text-xs text-destructive"
                                         >
                                             {{
                                                 (form.errors as any)[
@@ -459,7 +504,8 @@ function duplicate() {
                                         </p>
                                     </td>
                                     <td class="p-2">
-                                        <input
+                                        <Input
+                                            aria-label="Cantidad"
                                             v-model.number="l.quantity"
                                             type="number"
                                             min="1"
@@ -467,7 +513,8 @@ function duplicate() {
                                         />
                                     </td>
                                     <td class="p-2">
-                                        <input
+                                        <Input
+                                            aria-label="Precio con IVA"
                                             v-model="l.unit_price"
                                             type="number"
                                             min="0"
@@ -496,27 +543,30 @@ function duplicate() {
                                     <td
                                         class="p-2 text-right whitespace-nowrap"
                                     >
-                                        <button
+                                        <Button
+                                            variant="ghost"
                                             class="px-1"
                                             title="Subir"
                                             @click="move(i, -1)"
                                         >
                                             ↑
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
                                             class="px-1"
                                             title="Bajar"
                                             @click="move(i, 1)"
                                         >
                                             ↓
-                                        </button>
-                                        <button
-                                            class="px-1 text-red-600"
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            class="px-1 text-destructive"
                                             title="Quitar"
                                             @click="form.items.splice(i, 1)"
                                         >
-                                            ✕
-                                        </button>
+                                            ×
+                                        </Button>
                                     </td>
                                 </tr>
                                 <tr v-if="!form.items.length">
@@ -533,7 +583,7 @@ function duplicate() {
                     </div>
                     <p
                         v-if="form.errors.items"
-                        class="p-3 text-sm text-red-600"
+                        class="p-3 text-sm text-destructive"
                     >
                         {{ form.errors.items }}
                     </p>
@@ -541,14 +591,14 @@ function duplicate() {
 
                 <div class="grid gap-4 md:grid-cols-2">
                     <label class="grid gap-1 text-sm"
-                        >Notas para el cliente (salen en el PDF)<textarea
+                        >Notas para el cliente (salen en el PDF)<Textarea
                             v-model="form.notes"
                             rows="3"
                             class="rounded-md border px-3 py-2"
                         />
                     </label>
                     <label class="grid gap-1 text-sm"
-                        >Notas internas<textarea
+                        >Notas internas<Textarea
                             v-model="form.internal_notes"
                             rows="3"
                             class="rounded-md border px-3 py-2"
@@ -577,18 +627,18 @@ function duplicate() {
                     </select>
                 </label>
                 <label class="grid gap-1 text-sm"
-                    >Vigente hasta<input
+                    >Vigente hasta<Input
                         v-model="form.valid_until"
                         type="date"
                         class="rounded-md border px-3 py-2"
                 /></label>
                 <label class="grid gap-1 text-sm"
-                    >Nombre de la build (opcional)<input
+                    >Nombre de la build (opcional)<Input
                         v-model="form.build_name"
                         class="rounded-md border px-3 py-2"
                 /></label>
                 <label class="grid gap-1 text-sm"
-                    >Descuento con IVA<input
+                    >Descuento con IVA<Input
                         v-model.number="form.discount"
                         type="number"
                         min="0"
@@ -610,7 +660,10 @@ function duplicate() {
                         <dt>{{ pending ? 'Total parcial' : 'Total' }}</dt>
                         <dd class="tabular-nums">{{ money(total) }}</dd>
                     </div>
-                    <p v-if="pending" class="text-xs text-amber-700">
+                    <p
+                        v-if="pending"
+                        class="text-xs text-amber-700 dark:text-amber-300"
+                    >
                         Hay partidas por confirmar.
                     </p>
                     <div
@@ -621,16 +674,16 @@ function duplicate() {
                         <dd>{{ (margin * 100).toFixed(1) }}%</dd>
                     </div>
                 </dl>
-                <button
-                    class="w-full rounded bg-[#E30613] px-4 py-2 font-semibold text-white disabled:opacity-50"
+                <Button
+                    class="w-full rounded bg-primary px-4 py-2 font-semibold text-primary-foreground disabled:opacity-50"
                     :disabled="form.processing"
                     @click="save"
                 >
                     {{ form.processing ? 'Guardando…' : 'Guardar cotización' }}
-                </button>
+                </Button>
                 <p
                     v-if="Object.keys(form.errors).length"
-                    class="text-sm text-red-600"
+                    class="text-sm text-destructive"
                 >
                     Revisa los campos marcados.
                 </p>

@@ -1,0 +1,124 @@
+{
+    "GeneralInfo": {
+        "IcecatId": 121376723,
+        "Title": "XPG LANCER BLADE RGB módulo de memoria 16 GB 1 x 16 GB DDR5 6000 MT/s 288-pin DIMM",
+        "Brand": "XPG",
+        "BrandPartCode": "AX5U6000C4816G-SLABRWH",
+        "GTIN": ["4711085948410"]
+    },
+    "FeaturesGroups": [
+        {
+            "FeatureGroup": {
+                "ID": "185",
+                "Name": {
+                    "Value": "Características",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "16",
+                    "PresentationValue": "16 GB",
+                    "Feature": {
+                        "ID": "11381",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "20",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7432",
+                                "_": "GB",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Memoria interna",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "1 x 16",
+                    "PresentationValue": "1 x 16 GB",
+                    "Feature": {
+                        "ID": "16023",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "20",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7432",
+                                "_": "GB",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Diseño de memoria (módulos x tamaño)",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "DDR5",
+                    "PresentationValue": "DDR5",
+                    "Feature": {
+                        "ID": "427",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Tipo de memoria interna",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "6000",
+                    "PresentationValue": "6000 MHz",
+                    "Feature": {
+                        "ID": "2900",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "18",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7430",
+                                "_": "MHz",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Velocidad de memoria del reloj",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "Gallery": [
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/d8c4c4e19582a44fc0f9cbbd0cd91e63d879a970.jpg",
+            "PicHeight": "561",
+            "PicWidth": "1461",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/be009d312abe3bb2d31d3027006bbb8b6c10ba6e.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/7a5ff045b7c029a05c50ccb1339f41f147e0cfa1.jpg",
+            "No": "1"
+        },
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/60529bdea40ae16edbd5e735b5aa5f9d6b8529df.jpg",
+            "PicHeight": "861",
+            "PicWidth": "1317",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/23957d015f5e500dce85d9f07e31f0795dc0648f.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/92f19565f573c48552723dfafd156ec1cf5049fc.jpg",
+            "No": "2"
+        }
+    ]
+}

@@ -64,22 +64,36 @@ function toast(message) {
     toastTimer = setTimeout(() => node.classList.remove("show"), 3200);
 }
 
+/* El botón confirma en el mismo lugar ("✓ Agregado") además del aviso flotante. */
+function confirmButton(button) {
+    if (!button.dataset.label) button.dataset.label = button.textContent;
+    button.textContent = "✓ Agregado";
+    button.classList.add("is-added");
+    clearTimeout(button._addedTimer);
+    button._addedTimer = setTimeout(() => {
+        button.textContent = button.dataset.label;
+        button.classList.remove("is-added");
+    }, 1800);
+}
+
 document.addEventListener("click", (event) => {
     const button = event.target.closest("[data-add-to-cart]");
-    if (!button) return;
-    const qtyInput = button.closest(".qty-row")?.querySelector("[data-qty]");
-    addToCart(Number(button.dataset.addToCart), Number(qtyInput?.value) || 1);
-    toast(`${button.dataset.name || "Producto"} agregado a tu cotización`);
+    if (button) {
+        const qtyInput = button.closest(".qty-row")?.querySelector("[data-qty]");
+        addToCart(Number(button.dataset.addToCart), Number(qtyInput?.value) || 1);
+        toast(`${button.dataset.name || "Producto"} agregado a tu cotización`);
+        confirmButton(button);
+        return;
+    }
+    // Equipo armado: todas sus piezas, una de cada una.
+    const build = event.target.closest("[data-add-build]");
+    if (!build) return;
+    const ids = build.dataset.addBuild.split(",").map(Number).filter((id) => id > 0);
+    ids.forEach((id) => addToCart(id, 1));
+    toast(`${build.dataset.name || "Equipo"}: ${ids.length} piezas agregadas a tu cotización`);
+    confirmButton(build);
 });
 
 /* La página de la cotización recién creada vacía el carrito. */
 if (document.querySelector("[data-clear-cart]")) clearCart();
 updateBadge();
-
-/* Galería de la ficha de producto. */
-const mainImage = document.querySelector("[data-gallery-main]");
-document.querySelectorAll("[data-gallery-thumb]").forEach((thumb) => {
-    thumb.addEventListener("click", () => {
-        if (mainImage) mainImage.src = thumb.dataset.galleryThumb;
-    });
-});

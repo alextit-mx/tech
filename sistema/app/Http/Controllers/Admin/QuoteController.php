@@ -8,10 +8,13 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Quote;
 use App\Services\QuoteService;
+use App\Support\ProductSearch;
 use App\Support\QuotePdf;
+use App\Support\Sat;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -105,10 +108,9 @@ class QuoteController extends Controller
     {
         $term = (string) $request->query('q', '');
 
-        $products = Product::with('brand:id,name')
-            ->where(fn ($q) => $q->where('name', 'like', "%{$term}%")->orWhere('sku', 'like', "%{$term}%"))
-            ->orderBy('name')->limit(15)->get()
-            ->map(fn (Product $p) => [...$this->quotes->lineFromProduct($p), 'stock' => $p->stock, 'price_mode' => $p->price_mode]);
+        $products = ProductSearch::apply(Product::query(), $term)
+            ->with(['brand:id,name', 'images'])->orderBy('name')->limit(20)->get()
+            ->map(fn (Product $p) => [...($request->user()->can('view-margins') ? $this->quotes->lineFromProduct($p) : Arr::except($this->quotes->lineFromProduct($p), ['unit_cost'])), 'id' => $p->id, 'name' => $p->name, 'image' => $p->imageOrPlaceholder(), 'price' => $p->publicPrice(), 'stock' => $p->stock, 'stock_24h' => $p->stock_24h, 'price_mode' => $p->price_mode]);
 
         return response()->json($products);
     }
@@ -119,6 +121,7 @@ class QuoteController extends Controller
 
         return Inertia::render('admin/QuoteEditor', [
             'quote' => $quote,
+            'sat' => Sat::catalogs(),
             'customer' => $quote?->customer ?? ($request->integer('customer_id') ? Customer::find($request->integer('customer_id')) : null),
             'defaults' => ['valid_until' => now()->addDays((int) setting('quote_validity_days', 3))->toDateString()],
             'statuses' => Quote::STATUSES,

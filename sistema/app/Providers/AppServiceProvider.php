@@ -28,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
             Gate::define($ability, fn ($user) => $user->role === 'owner');
         }
 
+        Gate::define('edit-products', fn ($user) => $user->is_active && in_array($user->role, ['owner', 'seller'], true));
+
         $this->configureDefaults();
     }
 

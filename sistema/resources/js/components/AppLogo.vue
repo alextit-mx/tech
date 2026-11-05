@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 
-const name = usePage().props.name;
+const page = usePage();
 </script>
 
 <template>
+    <img
+        :src="page.props.branding?.icon ?? '/img/ats-emblema.png'"
+        alt=""
+        width="32"
+        height="38"
+        class="size-8 shrink-0 object-contain"
+    />
     <div
-        class="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
+        class="ml-1 grid flex-1 gap-0.5 text-left text-sm group-data-[collapsible=icon]:hidden"
     >
-        <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
-    </div>
-    <div class="ml-1 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate leading-tight font-semibold">{{
-            name
-        }}</span>
+        <span class="truncate leading-tight font-semibold">Tech Computer</span>
+        <span class="text-xs text-muted-foreground">Portal del personal</span>
     </div>
 </template>

@@ -1,0 +1,32 @@
+{
+    "FeaturesGroups": [
+        {
+            "Features": [
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Interfaz de disco duro"
+                        }
+                    },
+                    "PresentationValue": "SATA III"
+                },
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Tipo de unidad"
+                        }
+                    },
+                    "PresentationValue": "HDD"
+                },
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Capacidad de disco duro"
+                        }
+                    },
+                    "PresentationValue": "2 TB"
+                }
+            ]
+        }
+    ]
+}

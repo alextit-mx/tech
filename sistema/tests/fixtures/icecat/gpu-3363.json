@@ -1,0 +1,167 @@
+{
+    "GeneralInfo": {
+        "IcecatId": 130852688,
+        "Title": "MSI GeForce RTX 5060 Ti 8G VENTUS 3X OC NVIDIA 8 GB GDDR7",
+        "Brand": "MSI",
+        "BrandPartCode": "GEFORCE RTX 5060 TI 8G VENTUS 3X OC",
+        "GTIN": ["0824142421031", "824142421031"]
+    },
+    "FeaturesGroups": [
+        {
+            "FeatureGroup": {
+                "ID": "3",
+                "Name": {
+                    "Value": "Memoria",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "8",
+                    "PresentationValue": "8 GB",
+                    "Feature": {
+                        "ID": "18403",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "20",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7432",
+                                "_": "GB",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Capacidad memoria de adaptador gráfico",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "27",
+                "Name": {
+                    "Value": "Control de energía",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "600",
+                    "PresentationValue": "600 W",
+                    "Feature": {
+                        "ID": "3462",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "44",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7453",
+                                "_": "W",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Suministro de energía al sistema mínimo",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "180",
+                    "PresentationValue": "180 W",
+                    "Feature": {
+                        "ID": "445",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "44",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7453",
+                                "_": "W",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Consumo energético",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "1x 16-pin",
+                    "PresentationValue": "1x 16-pin",
+                    "Feature": {
+                        "ID": "7992",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Conectores de energia suplementario",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "14",
+                "Name": {
+                    "Value": "Peso y dimensiones",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "304",
+                    "PresentationValue": "304 mm",
+                    "Feature": {
+                        "ID": "2738",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "24",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7436",
+                                "_": "mm",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Longitud",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "Gallery": [
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/833e4e2855dfcb5acb2d354dbfcd702b95e91b83.jpg",
+            "PicHeight": "800",
+            "PicWidth": "1000",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/f235a8fa2e71db437f0deec29ee0d6e80f30df5a.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/8289cf79eb2b45375813fa2cf91351efc8868486.jpg",
+            "No": "1"
+        },
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/a720a31c54561b0eb8d1818dae051b02a1213c46.jpg",
+            "PicHeight": "800",
+            "PicWidth": "1000",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/2d24753742723d5b1be3aeb20af5da011abf1101.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/68aa32afdd5b08fa6e54adf2327be6670aab355e.jpg",
+            "No": "2"
+        }
+    ]
+}

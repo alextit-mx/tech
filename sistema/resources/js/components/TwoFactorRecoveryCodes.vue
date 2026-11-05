@@ -42,11 +42,12 @@ onMounted(async () => {
     <Card class="w-full">
         <CardHeader>
             <CardTitle class="flex gap-3">
-                <LockKeyhole class="size-4" />2FA recovery codes
+                <LockKeyhole class="size-4" />Códigos de recuperación
             </CardTitle>
             <CardDescription>
-                Recovery codes let you regain access if you lose your 2FA
-                device. Store them in a secure password manager.
+                Estos códigos te permiten entrar si pierdes tu dispositivo de
+                autenticación. Guárdalos en un administrador de contraseñas
+                seguro.
             </CardDescription>
         </CardHeader>
         <CardContent>
@@ -58,8 +59,8 @@ onMounted(async () => {
                         :is="isRecoveryCodesVisible ? EyeOff : Eye"
                         class="size-4"
                     />
-                    {{ isRecoveryCodesVisible ? 'Hide' : 'View' }} recovery
-                    codes
+                    {{ isRecoveryCodesVisible ? 'Ocultar' : 'Ver' }} códigos de
+                    recuperación
                 </Button>
 
                 <Form
@@ -75,7 +76,7 @@ onMounted(async () => {
                         type="submit"
                         :disabled="processing"
                     >
-                        <RefreshCw /> Regenerate codes
+                        <RefreshCw /> Generar nuevos códigos
                     </Button>
                 </Form>
             </div>
@@ -111,10 +112,10 @@ onMounted(async () => {
                         </div>
                     </div>
                     <p class="text-xs text-muted-foreground select-none">
-                        Each recovery code can be used once to access your
-                        account and will be removed after use. If you need more,
-                        click
-                        <span class="font-bold">Regenerate codes</span> above.
+                        Cada código se puede usar una sola vez y se elimina
+                        después de entrar. Si necesitas más, selecciona
+                        <span class="font-bold">Generar nuevos códigos</span> de
+                        nuevo.
                     </p>
                 </div>
             </div>

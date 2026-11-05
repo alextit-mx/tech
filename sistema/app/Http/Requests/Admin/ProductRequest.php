@@ -9,7 +9,7 @@ class ProductRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        return $this->user()?->can('edit-products') ?? false;
     }
 
     public function rules(): array
@@ -19,13 +19,14 @@ class ProductRequest extends FormRequest
         return [
             'sku' => ['required', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($product?->id)],
             'name' => ['required', 'string', 'max:255'],
+            'model' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('products', 'slug')->ignore($product?->id)],
             'category_id' => ['required', 'exists:categories,id'], 'brand_id' => ['nullable', 'exists:brands,id'],
             'short_description' => ['nullable', 'string', 'max:255'], 'description' => ['nullable', 'string'],
             'cost' => ['nullable', 'numeric', 'min:0'], 'cost_currency' => ['required', 'in:MXN,USD'],
             'price' => ['nullable', 'numeric', 'min:0'], 'price_mode' => ['required', 'in:show,quote'],
-            'stock' => ['required', 'integer', 'min:0'], 'is_published' => ['sometimes', 'boolean'], 'is_featured' => ['sometimes', 'boolean'],
-            'specs' => ['nullable', 'array'], 'warranty_months' => ['nullable', 'integer', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'], 'stock_24h' => ['sometimes', 'integer', 'min:0'], 'is_published' => ['sometimes', 'boolean'], 'is_featured' => ['sometimes', 'boolean'],
+            'confirm_specs' => ['sometimes', 'boolean'], 'specs' => ['nullable', 'array'], 'warranty_months' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

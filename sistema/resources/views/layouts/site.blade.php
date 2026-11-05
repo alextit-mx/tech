@@ -12,14 +12,23 @@
 <meta property="og:locale" content="es_MX" />
 <meta property="og:title" content="@yield('title', 'Tech Computer')" />
 <meta property="og:description" content="@yield('description', 'PCs gamer y servicio técnico en Plaza de la Tecnología, CDMX.')" />
-<meta property="og:image" content="@yield('og_image', asset('img/ats-computer.png'))" />
+<meta property="og:image" content="@yield('og_image', \App\Support\Branding::siteLogoUrl())" />
 <meta property="og:url" content="{{ url()->current() }}" />
 <meta name="twitter:card" content="summary_large_image" />
-<link rel="icon" type="image/png" href="/img/favicon.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="{{ \App\Support\Branding::iconUrl(180) }}" />
+<link rel="icon" type="image/png" href="{{ \App\Support\Branding::iconUrl(32) }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet" />
-<script>document.documentElement.classList.add("js");</script>
+<script>
+    document.documentElement.classList.add("js");
+    // Modo de color elegido (ATS, RGB, Frost, Amber), antes de pintar para que no parpadee.
+    // ?modo=rgb en un enlace (campañas) manda sobre lo guardado.
+    try {
+        var m = new URLSearchParams(location.search).get("modo") || localStorage.getItem("tc-mode");
+        if (["ats", "rgb", "frost", "amber"].indexOf(m) >= 0) document.documentElement.dataset.theme = m;
+    } catch (e) {}
+</script>
 @vite('resources/js/site/main.js')
 @stack('head')
 </head>
@@ -31,26 +40,40 @@
     $whatsapp = setting('whatsapp', '525549114435');
 @endphp
 <header class="site-header">
-    <a class="brand" href="/"><img src="/img/ats-computer.png" alt="Tech Computer, inicio" width="300" height="117" /></a>
+    <a class="brand" href="/"><img src="{{ \App\Support\Branding::siteLogoUrl() }}" alt="Tech Computer, inicio" width="300" height="117" /></a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
     <nav class="site-nav" id="nav" aria-label="Principal">
         @foreach ($nav as $href => $label)
             <a href="{{ $href }}" @if (request()->is(ltrim($href, '/').'*') || ($href === '/tienda' && request()->is('producto/*', 'buscar'))) aria-current="page" @endif>{{ $label }}</a>
         @endforeach
+        <a class="nav-search" href="/buscar">Buscar productos</a>
     </nav>
     <div class="header-tools">
         <form class="header-search" action="/buscar" role="search">
             <label class="sr-only" for="q">Buscar productos</label>
-            <input id="q" name="q" type="search" placeholder="Buscar" value="{{ request()->is('buscar') ? request('q') : '' }}" />
+            <span class="mask" aria-hidden="true" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/search.svg')"></span>
+            <input id="q" name="q" type="search" placeholder="Buscar productos" autocomplete="off" data-suggest value="{{ request()->is('buscar') ? request('q') : '' }}" />
         </form>
-        <a class="cart-link" href="/carrito" aria-label="Mi cotización">
-            <span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/clipboard-list.svg')"></span>
+        <a class="cart-link" href="/carrito" aria-label="Mi cotización" title="Mi cotización">
+            <span class="mask" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/shopping-cart.svg')"></span>
             <span class="cart-count" data-cart-count hidden>0</span>
         </a>
         <a class="btn btn-primary btn-sm btn-whats" data-whats="Hola Tech Computer" href="https://wa.me/{{ $whatsapp }}">
             WhatsApp
             <span class="ic"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span></span>
         </a>
+        {{-- Al final: con sesión iniciada lleva al panel; sin ella, al acceso del personal. --}}
+        @auth
+            <a class="account-link is-in" href="/admin" title="Ir al panel de Tech Computer">
+                <span class="mask" aria-hidden="true" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/layout-dashboard.svg')"></span>
+                <span class="account-label">Mi panel</span>
+            </a>
+        @else
+            <a class="account-link" href="/login" title="Acceso para personal">
+                <span class="mask" aria-hidden="true" style="--icon: url('https://unpkg.com/lucide-static@0.469.0/icons/log-in.svg')"></span>
+                <span class="account-label">Entrar</span>
+            </a>
+        @endauth
     </div>
 </header>
 
@@ -58,7 +81,7 @@
 
 <footer class="site-footer">
     <div>
-        <img src="/img/ats-computer.png" alt="Tech Computer" width="300" height="117" loading="lazy" />
+        <img src="{{ \App\Support\Branding::siteLogoUrl() }}" alt="Tech Computer" width="300" height="117" loading="lazy" />
         <p>PCs gamer, componentes, periféricos, impresoras y consumibles, armado a la medida y servicio técnico en Plaza de la Tecnología, Centro de la Ciudad de México.</p>
     </div>
     <nav aria-label="Sitio">
@@ -67,6 +90,7 @@
         @endforeach
         <a href="/estado">Estado de mi equipo</a>
         <a href="/garantia">Consultar garantía</a>
+        <a href="/login">Acceso para personal</a>
     </nav>
     <div class="reach">
         <a data-whats="Hola Tech Computer" href="https://wa.me/{{ $whatsapp }}">WhatsApp {{ preg_replace('/^52(\d{2})(\d{4})(\d{4})$/', '$1 $2 $3', $whatsapp) }}</a>

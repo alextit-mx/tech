@@ -11,6 +11,7 @@ import {
     watch,
 } from 'vue';
 import LootCard from './LootCard.vue';
+import { suggested } from '@/actions/App/Http/Controllers/Site/BuilderController';
 import {
     BUDGETS,
     consumption,
@@ -19,19 +20,22 @@ import {
     missingSlots,
     powerLevel,
     rarity,
-    recommend,
+    issues,
     recommendedPsu,
     resolutions,
     SLOT_INFO,
     SLOTS,
     USES,
-    warnings,
 } from './rules';
 import type { Budget, Build, Extra, Part, Slot, Use } from './rules';
 import { PcScene, webglAvailable } from './scene';
 import { setSound, sfx, soundEnabled } from './sfx';
 
-const props = defineProps<{ catalog: { parts: Part[]; extras: Extra[] } }>();
+const props = defineProps<{
+    catalog: { parts: Part[]; extras: Extra[] };
+    /** Personal con sesión iniciada: puede guardar la build como equipo armado de la tienda. */
+    staff?: boolean;
+}>();
 
 type Phase = 'boot' | 'start' | 'build' | 'setup' | 'finale';
 const STORE = 'tc-build';
@@ -50,9 +54,14 @@ const sort = ref<'power' | 'price' | 'price-desc'>('price');
 const onlyCompatible = ref(true);
 const sound = ref(soundEnabled());
 const notice = ref('');
+const presetLoading = ref(false);
+const presetMessage = ref('');
+let presetVersion = 0;
+let presetAbort: AbortController | null = null;
 const shared = ref(false);
 const webgl = webglAvailable();
 const canvas = ref<HTMLCanvasElement | null>(null);
+const cardsEl = ref<HTMLElement | null>(null);
 const scene = shallowRef<PcScene | null>(null);
 const startUse = ref<Use>('gaming1440');
 const startBudget = ref<Budget>('equilibrada');
@@ -107,10 +116,18 @@ const watts = computed(() => consumption(build));
 const psuWatts = computed(() => Number(build.psu?.specs.watts ?? 0));
 const level = computed(() => powerLevel(build));
 const res = computed(() => resolutions(build));
-const warns = computed(() => warnings(build));
+const warns = computed(() =>
+    issues(build).map((issue) => ({
+        ...issue,
+        slot: issue.slots[0],
+        blocking: issue.level === 'incompatible',
+    })),
+);
 const blocking = computed(() => warns.value.some((w) => w.blocking));
 const missing = computed(() => missingSlots(build));
-const canQuote = computed(() => missing.value.length === 0 && !blocking.value);
+// Se puede cotizar un kit de actualización o una PC con gráficos integrados;
+// solo bloquean las incompatibilidades. Lo que falte se anota en la cotización.
+const canQuote = computed(() => chosen.value.length > 0 && !blocking.value);
 const powerState = computed(() =>
     !build.psu
         ? 'none'
@@ -175,6 +192,67 @@ watch(
     { immediate: true },
 );
 
+/* Energía y nivel de poder: cifras que cuentan hacia su valor y escala común para las dos barras. */
+function tweened(source: () => number, duration = 0.8) {
+    const shown = ref(0);
+    const state = { v: 0 };
+    watch(
+        source,
+        (value) =>
+            gsap.to(state, {
+                v: value,
+                duration: reduced ? 0 : duration,
+                ease: 'power3.out',
+                overwrite: true,
+                onUpdate: () => {
+                    shown.value = Math.round(state.v);
+                },
+            }),
+        { immediate: true },
+    );
+    return shown;
+}
+const recommended = computed(() => recommendedPsu(build));
+const shownWatts = tweened(() => watts.value);
+const shownPsu = tweened(() => psuWatts.value);
+const shownLevel = tweened(() => level.value, 1.1);
+const powerScale = computed(
+    () =>
+        Math.ceil(
+            (Math.max(watts.value, psuWatts.value, recommended.value, 300) *
+                1.12) /
+                100,
+        ) * 100,
+);
+const pct = (w: number) =>
+    `${Math.min(100, Math.max(0, (w / powerScale.value) * 100))}%`;
+const powerNote = computed(() => {
+    if (powerState.value === 'none')
+        return `Elige una fuente · sugerida ${recommended.value} W`;
+    if (powerState.value === 'bad')
+        return `A la fuente le faltan ${watts.value - psuWatts.value} W`;
+    if (powerState.value === 'tight')
+        return `Justa · recomendada ${recommended.value} W`;
+    return `Margen de ${psuWatts.value - watts.value} W`;
+});
+const levelTier = computed(() =>
+    level.value === 0 ? 0 : level.value < 40 ? 1 : level.value < 70 ? 2 : 3,
+);
+/* Marcas del velocímetro: 11 rayas de 0 a 100, las de 0, 50 y 100 más largas. */
+const ticks = Array.from({ length: 11 }, (_, i) => {
+    const a = Math.PI * (1 - i / 10);
+    const major = i % 5 === 0;
+    const [r1, r2] = major ? [36, 43] : [39, 43];
+    return {
+        i,
+        major,
+        x1: 60 + Math.cos(a) * r1,
+        y1: 62 - Math.sin(a) * r1,
+        x2: 60 + Math.cos(a) * r2,
+        y2: 62 - Math.sin(a) * r2,
+    };
+});
+
 const money = (n: number) =>
     '$' + n.toLocaleString('es-MX', { maximumFractionDigits: 0 });
 
@@ -189,10 +267,20 @@ function say(message: string): void {
 }
 
 function select(slot: Slot): void {
+    const changed = active.value !== slot;
     active.value = slot;
     query.value = '';
     sfx.select();
     scene.value?.focus(slot);
+    // La lista de la nueva pieza empieza desde arriba (en celular, también la página vuelve al selector).
+    if (changed) {
+        void nextTick(() => {
+            cardsEl.value?.scrollTo({ top: 0 });
+            const picker = cardsEl.value?.closest('.picker');
+            if (picker && picker.getBoundingClientRect().top < 0)
+                picker.scrollIntoView({ block: 'start' });
+        });
+    }
 }
 
 function equip(part: Part, animate = true): void {
@@ -214,7 +302,44 @@ function equip(part: Part, animate = true): void {
         say(`Quitamos ${removed.join(' y ')} porque ya no era compatible.`);
     const next = SLOTS.find((slot) => !build[slot] && slot !== 'cooler');
     if (next && next !== active.value)
-        window.setTimeout(() => select(next), reduced ? 0 : 650);
+        // Espera a que termine la llegada de la pieza (caída + impacto) antes de mover la cámara.
+        later(() => select(next), reduced ? 0 : 1900);
+}
+
+/* Llegadas de una base recomendada y avances automáticos pendientes: "Desde cero" los cancela. */
+const timers: number[] = [];
+function later(fn: () => void, ms: number): void {
+    timers.push(window.setTimeout(fn, ms));
+}
+
+/** Quita de la dirección la build compartida o la base (?b, ?uso…): ya está cargada y guardada en el navegador. */
+function cleanUrl(): void {
+    const url = new URL(window.location.href);
+    ['b', 'n', 'uso', 'presupuesto'].forEach((key) =>
+        url.searchParams.delete(key),
+    );
+    window.history.replaceState(window.history.state, '', url);
+}
+
+/** "Desde cero" y "Vaciar": sin piezas ni extras, y la escena 3D vuelve a empezar (sin emblema ni giro del final). */
+function startFresh(): void {
+    presetVersion++;
+    presetAbort?.abort();
+    presetLoading.value = false;
+    presetMessage.value = '';
+    timers.splice(0).forEach((id) => window.clearTimeout(id));
+    for (const slot of SLOTS) delete build[slot];
+    extras.value = [];
+    result.value = null;
+    buildName.value = 'Mi PC';
+    cleanUrl();
+    scene.value?.reset();
+    sfx.remove();
+    phase.value = 'build';
+    // Sin mover la cámara: que se vea la entrada completa; el selector abre en procesador.
+    active.value = 'cpu';
+    query.value = '';
+    void nextTick(() => cardsEl.value?.scrollTo({ top: 0 }));
 }
 
 function unequip(slot: Slot): void {
@@ -228,23 +353,69 @@ function pick(part: Part): void {
     equip(part);
 }
 
-function reset(): void {
-    for (const slot of SLOTS) unequip(slot);
+async function applyPreset(use: Use, budget: Budget): Promise<void> {
+    const version = ++presetVersion;
+    presetAbort?.abort();
+    presetAbort = new AbortController();
+    timers.splice(0).forEach((id) => window.clearTimeout(id));
+    presetLoading.value = true;
+    presetMessage.value = '';
+    phase.value = 'build';
+    let recommended: Build = {};
+    try {
+        const response = await fetch(
+            suggested.url({ query: { uso: use, presupuesto: budget } }),
+            {
+                signal: presetAbort.signal,
+                headers: { Accept: 'application/json' },
+            },
+        );
+        if (!response.ok)
+            throw new Error(
+                'No pudimos consultar las existencias. Intenta de nuevo.',
+            );
+        const data = (await response.json()) as {
+            parts: Partial<Record<Slot, number>>;
+            unavailable: boolean;
+            message: string | null;
+        };
+        if (version !== presetVersion) return;
+        presetMessage.value = data.message ?? '';
+        if (data.unavailable) {
+            for (const slot of SLOTS) delete build[slot];
+            extras.value = [];
+            result.value = null;
+            scene.value?.reset();
+            return;
+        }
+        for (const slot of SLOTS) {
+            const part = byId.get(data.parts[slot] ?? 0);
+            if (data.parts[slot] && !part)
+                throw new Error(
+                    'El catálogo cambió. Recarga la página para ver las existencias de hoy.',
+                );
+            if (part) recommended[slot] = part;
+        }
+    } catch (error) {
+        if (version === presetVersion)
+            presetMessage.value =
+                error instanceof Error
+                    ? error.message
+                    : 'No pudimos consultar las existencias.';
+        return;
+    } finally {
+        if (version === presetVersion) presetLoading.value = false;
+    }
+
+    timers.splice(0).forEach((id) => window.clearTimeout(id));
+    for (const slot of SLOTS) delete build[slot];
     extras.value = [];
     result.value = null;
-    select('cpu');
-}
-
-function applyPreset(use: Use, budget: Budget): void {
-    const recommended = recommend(parts, use, budget);
-    for (const slot of SLOTS) {
-        delete build[slot];
-        scene.value?.setPart(slot, null);
-    }
+    scene.value?.reset();
     SLOTS.forEach((slot, i) => {
         const part = recommended[slot];
         if (!part) return;
-        window.setTimeout(
+        later(
             () => {
                 build[slot] = part;
                 scene.value?.setPart(slot, part);
@@ -255,7 +426,7 @@ function applyPreset(use: Use, budget: Budget): void {
     });
     buildName.value = `${USES[use]} · ${BUDGETS[budget]}`;
     phase.value = 'build';
-    window.setTimeout(
+    later(
         () => select(SLOTS.find((slot) => !recommended[slot]) ?? 'gpu'),
         reduced ? 0 : SLOTS.length * 260,
     );
@@ -267,6 +438,14 @@ function shareUrl(): string {
     url.searchParams.set('b', chosen.value.map((p) => p.id).join('.'));
     if (buildName.value) url.searchParams.set('n', buildName.value);
     return url.toString();
+}
+
+function saveAsBuild(): void {
+    const qs = new URLSearchParams({
+        b: chosen.value.map((p) => p.id).join('.'),
+        n: buildName.value,
+    });
+    window.open(`/admin/builds/create?${qs}`, '_blank', 'noopener');
 }
 
 async function share(): Promise<void> {
@@ -297,6 +476,11 @@ function toggleExtra(id: number): void {
 async function finale(): Promise<void> {
     if (!canQuote.value) return;
     phase.value = 'finale';
+    if (window.matchMedia('(max-width: 1023px)').matches)
+        document.querySelector('.build-main')?.scrollIntoView({
+            behavior: reduced ? 'instant' : 'smooth',
+            block: 'start',
+        });
     sfx.complete();
     await scene.value?.celebrate();
 }
@@ -381,7 +565,12 @@ watch(
 async function boot(): Promise<void> {
     let seen = false;
     try {
-        seen = sessionStorage.getItem('tc-boot') === '1';
+        // Quien abre una build compartida viene a verla: sin arranque.
+        seen =
+            sessionStorage.getItem('tc-boot') === '1' ||
+            new URLSearchParams(window.location.search).has('b') ||
+            // El loader con el emblema ya hizo de arranque: no se repite la secuencia BIOS.
+            document.querySelector('[data-lab-loader]') !== null;
         sessionStorage.setItem('tc-boot', '1');
     } catch {
         seen = false;
@@ -410,21 +599,36 @@ function endBoot(): void {
     const use = params.get('uso') as Use | null;
     const budget = params.get('presupuesto') as Budget | null;
     if (use && use in USES && budget && budget in BUDGETS)
-        return applyPreset(use, budget);
-    phase.value = params.get('b') ? 'build' : 'start';
+        applyPreset(use, budget);
+    else phase.value = params.get('b') ? 'build' : 'start';
+    // Al recargar manda lo guardado en el navegador, no el enlace con el que se llegó.
+    cleanUrl();
 }
 
 onMounted(async () => {
     await nextTick();
     if (webgl && canvas.value)
-        scene.value = new PcScene(canvas.value, { reduced, lowPower });
+        scene.value = new PcScene(canvas.value, {
+            reduced,
+            lowPower,
+            // Clic en una pieza de la escena = abrir su slot en el selector.
+            onPick: (slot) => phase.value === 'build' && select(slot),
+        });
     hasSaved.value = restore();
     void boot();
     window.addEventListener('keydown', onKey);
+    // Dos cuadros después la escena ya pintó (y compiló sus shaders): el loader de la página puede irse.
+    requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+            window.dispatchEvent(new Event('build-lab:ready')),
+        ),
+    );
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('keydown', onKey);
+    presetAbort?.abort();
+    timers.splice(0).forEach((id) => window.clearTimeout(id));
     scene.value?.destroy();
 });
 
@@ -440,7 +644,16 @@ function onKey(event: KeyboardEvent): void {
 </script>
 
 <template>
-    <div class="lab" :class="`is-${phase}`">
+    <div class="lab" :class="`is-${phase}`" :aria-busy="presetLoading">
+        <p
+            v-if="presetLoading || presetMessage"
+            role="status"
+            class="fixed bottom-6 left-1/2 z-50 max-w-lg -translate-x-1/2 rounded-lg bg-zinc-900 p-4 text-white"
+        >
+            {{
+                presetLoading ? 'Buscando un armado compatible…' : presetMessage
+            }}
+        </p>
         <div class="stage" aria-hidden="true">
             <canvas v-if="webgl" ref="canvas"></canvas>
             <svg v-else class="schematic" viewBox="0 0 440 480">
@@ -528,38 +741,91 @@ function onKey(event: KeyboardEvent): void {
                 <strong aria-live="polite">{{ money(shownTotal) }}</strong>
                 <small v-if="pending">+ {{ pending }} por confirmar</small>
             </div>
-            <div class="hud-cell hud-power" :data-state="powerState">
+            <div
+                class="hud-cell hud-power"
+                :data-state="powerState"
+                role="group"
+                :aria-label="`Energía: requiere ${watts} W${psuWatts ? `, fuente de ${psuWatts} W` : ''}. ${powerNote}`"
+            >
                 <span class="silk">ENERGÍA</span>
-                <span class="meter"
-                    ><i
-                        :style="{
-                            width: `${Math.min(100, psuWatts ? (watts / psuWatts) * 100 : 0)}%`,
-                        }"
-                    ></i
-                ></span>
-                <small
-                    >{{ watts }} W ·
-                    {{
-                        psuWatts
-                            ? `fuente ${psuWatts} W`
-                            : `sugerida ${recommendedPsu(build)} W`
-                    }}</small
-                >
+                <div class="pbar">
+                    <span class="pbar-label">Requiere</span>
+                    <span class="pbar-track">
+                        <i
+                            class="pbar-fill need"
+                            :style="{ width: pct(watts) }"
+                        ></i>
+                        <b
+                            v-if="watts"
+                            class="pbar-mark"
+                            :style="{ left: pct(recommended) }"
+                            :title="`Fuente recomendada: ${recommended} W`"
+                        ></b>
+                    </span>
+                    <span class="pbar-value">{{ shownWatts }} W</span>
+                </div>
+                <div class="pbar">
+                    <span class="pbar-label">Fuente</span>
+                    <span class="pbar-track">
+                        <i
+                            class="pbar-fill supply"
+                            :style="{ width: pct(psuWatts) }"
+                        ></i>
+                    </span>
+                    <span class="pbar-value">{{
+                        psuWatts ? `${shownPsu} W` : '—'
+                    }}</span>
+                </div>
+                <small>{{ powerNote }}</small>
             </div>
-            <div class="hud-cell hud-level">
-                <svg viewBox="0 0 44 44" class="gauge" aria-hidden="true">
-                    <circle cx="22" cy="22" r="18" class="gauge-bg" />
-                    <circle
-                        cx="22"
-                        cy="22"
-                        r="18"
-                        class="gauge-fg"
-                        :style="{ strokeDashoffset: 113 - (113 * level) / 100 }"
+            <div class="hud-cell hud-level" :data-tier="levelTier">
+                <svg viewBox="0 0 120 68" class="speedo" aria-hidden="true">
+                    <defs>
+                        <linearGradient
+                            id="speedo-grad"
+                            x1="17"
+                            y1="0"
+                            x2="103"
+                            y2="0"
+                            gradientUnits="userSpaceOnUse"
+                        >
+                            <stop offset="0" stop-color="#3be07a" />
+                            <stop offset="0.55" stop-color="#ffb020" />
+                            <stop offset="1" stop-color="#ff2238" />
+                        </linearGradient>
+                    </defs>
+                    <path class="speedo-track" d="M12 62 A48 48 0 0 1 108 62" />
+                    <path
+                        class="speedo-fill"
+                        d="M12 62 A48 48 0 0 1 108 62"
+                        pathLength="100"
+                        :style="{ strokeDashoffset: 100 - level }"
                     />
+                    <line
+                        v-for="t in ticks"
+                        :key="t.i"
+                        class="speedo-tick"
+                        :class="{ major: t.major }"
+                        :x1="t.x1"
+                        :y1="t.y1"
+                        :x2="t.x2"
+                        :y2="t.y2"
+                    />
+                    <g
+                        class="speedo-needle"
+                        :style="{ transform: `rotate(${level * 1.8 - 90}deg)` }"
+                    >
+                        <g class="speedo-wobble">
+                            <path
+                                d="M58.3 62 L59.5 22 L60 18 L60.5 22 L61.7 62 Z"
+                            />
+                        </g>
+                    </g>
+                    <circle cx="60" cy="62" r="5" class="speedo-hub" />
                 </svg>
                 <div>
                     <span class="silk">NIVEL DE PODER</span>
-                    <strong>{{ level }}</strong>
+                    <strong aria-live="polite">{{ shownLevel }}</strong>
                     <span class="res">
                         <span
                             v-for="r in res"
@@ -665,7 +931,7 @@ function onKey(event: KeyboardEvent): void {
                 >
             </div>
             <p v-if="optionalHint" class="picker-hint">{{ optionalHint }}</p>
-            <div class="cards">
+            <div ref="cardsEl" class="cards">
                 <LootCard
                     v-for="row in list"
                     :key="row.part.id"
@@ -721,7 +987,7 @@ function onKey(event: KeyboardEvent): void {
                     type="button"
                     class="ghost"
                     :disabled="!chosen.length"
-                    @click="reset"
+                    @click="startFresh"
                 >
                     Vaciar
                 </button>
@@ -732,6 +998,16 @@ function onKey(event: KeyboardEvent): void {
                     @click="share"
                 >
                     {{ shared ? 'Enlace copiado' : 'Compartir build' }}
+                </button>
+                <button
+                    v-if="staff"
+                    type="button"
+                    class="ghost"
+                    :disabled="!chosen.length"
+                    title="Solo personal: crea un equipo armado para la tienda con estas piezas"
+                    @click="saveAsBuild"
+                >
+                    Guardar como equipo armado
                 </button>
                 <button
                     type="button"
@@ -774,10 +1050,7 @@ function onKey(event: KeyboardEvent): void {
                     <button
                         type="button"
                         class="start-card"
-                        @click="
-                            phase = 'build';
-                            select('cpu');
-                        "
+                        @click="startFresh"
                     >
                         <span class="silk">01</span>
                         <strong>Desde cero</strong>
@@ -965,6 +1238,15 @@ function onKey(event: KeyboardEvent): void {
                                 pending ? ` · ${pending} por confirmar` : ''
                             }}</small
                         >
+                    </p>
+                    <p v-if="missing.length" class="muted">
+                        Sin
+                        {{
+                            missing
+                                .map((s) => SLOT_INFO[s].label.toLowerCase())
+                                .join(', ')
+                        }}: lo anotamos en tu cotización y te recomendamos
+                        opciones.
                     </p>
                     <form class="finale-form" @submit.prevent="submit">
                         <label

@@ -62,6 +62,8 @@ class QuoteService
                 return [
                     'product_id' => $product?->id,
                     'sku' => $product?->sku ?? ($row['sku'] ?? null),
+                    ...collect($product ? $this->lineFromProduct($product) : [])->only(['brand', 'model', 'warranty'])->all(),
+                    ...array_intersect_key($row, array_flip(['brand', 'model', 'warranty'])),
                     'description' => $row['description'],
                     'quantity' => (int) $row['quantity'],
                     'unit_price' => $row['unit_price'] === null || $row['unit_price'] === '' ? null : round((float) $row['unit_price'], 2),
@@ -80,7 +82,7 @@ class QuoteService
             $copy = $this->newQuote($original->customer, $user, 'admin');
             $copy->fill($original->only(['discount', 'notes', 'internal_notes', 'build_name']))->save();
 
-            return $this->syncItems($copy, $original->items->map(fn ($item) => $item->only(['product_id', 'sku', 'description', 'quantity', 'unit_price', 'unit_cost']))->all());
+            return $this->syncItems($copy, $original->items->map(fn ($item) => $item->only(['product_id', 'sku', 'brand', 'model', 'warranty', 'description', 'quantity', 'unit_price', 'unit_cost']))->all());
         });
     }
 
@@ -90,11 +92,25 @@ class QuoteService
         return [
             'product_id' => $product->id,
             'sku' => $product->sku,
+            'brand' => $product->brand?->name,
+            'model' => $product->model,
+            'warranty' => self::warrantyText($product->warranty_months),
             'description' => trim(($product->brand?->name ? $product->brand->name.' ' : '').$product->name),
             'quantity' => $quantity,
             'unit_price' => $product->price_mode === 'show' && $product->price !== null ? (float) $product->price : null,
             'unit_cost' => $product->costInMxn(),
         ];
+    }
+
+    public static function warrantyText(?int $months): ?string
+    {
+        if (! $months) {
+            return null;
+        }
+
+        return $months % 12 === 0
+            ? ($months / 12).' '.($months === 12 ? 'AÑO' : 'AÑOS')
+            : $months.' '.($months === 1 ? 'MES' : 'MESES');
     }
 
     private function newQuote(Customer $customer, ?User $user, string $source): Quote

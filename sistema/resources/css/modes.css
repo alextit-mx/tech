@@ -1,0 +1,317 @@
+/*
+ * Modos del sitio: ATS (rojo), RGB (arcoíris en movimiento), Frost (hielo) y Amber (diagnóstico).
+ * Cambian --red y sus variantes, así que toda la página se recolorea. El hero del inicio los recorre
+ * y el botón del encabezado fija uno en todo el sitio.
+ */
+@property --red {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #e30613;
+}
+@property --red-hot {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #f2101e;
+}
+@property --red-deep {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #7a0710;
+}
+@property --hue {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 350;
+}
+
+html {
+    --mode-accent: #e30613;
+    --red: var(--mode-accent);
+    transition:
+        --red 0.8s var(--ease),
+        --red-hot 0.8s var(--ease),
+        --red-deep 0.8s var(--ease);
+}
+html[data-theme='rgb'] {
+    --mode-accent: hsl(var(--hue) 95% 55%);
+    --red: var(--mode-accent);
+    --red-hot: hsl(calc(var(--hue) + 40) 100% 62%);
+    --red-deep: hsl(var(--hue) 80% 24%);
+    animation: hue-cycle 10s linear infinite;
+}
+@keyframes hue-cycle {
+    to {
+        --hue: 710;
+    }
+}
+html[data-theme='frost'] {
+    --mode-accent: #2fb4ff;
+    --red: var(--mode-accent);
+    --red-hot: #7ad3ff;
+    --red-deep: #0a3d5c;
+}
+html[data-theme='amber'] {
+    --mode-accent: #ff9a1f;
+    --red: var(--mode-accent);
+    --red-hot: #ffb957;
+    --red-deep: #6b3a06;
+}
+
+/* En RGB los botones y la línea del encabezado llevan el arcoíris completo. */
+html[data-theme='rgb'] .btn-primary {
+    background: linear-gradient(
+        100deg,
+        hsl(var(--hue) 95% 50%),
+        hsl(calc(var(--hue) + 110) 95% 48%),
+        hsl(calc(var(--hue) + 220) 95% 52%)
+    );
+}
+.site-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    opacity: 0;
+    transition: opacity 0.6s;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--red) 30%,
+        var(--red-hot) 70%,
+        transparent
+    );
+}
+html[data-theme='rgb'] .site-header::after {
+    opacity: 1;
+    background: linear-gradient(
+        90deg,
+        hsl(var(--hue) 95% 55%),
+        hsl(calc(var(--hue) + 120) 95% 55%),
+        hsl(calc(var(--hue) + 240) 95% 55%),
+        hsl(var(--hue) 95% 55%)
+    );
+}
+html[data-theme='frost'] .site-header::after,
+html[data-theme='amber'] .site-header::after {
+    opacity: 1;
+}
+
+/* Barrido de luz al cambiar de modo. */
+.mode-sweep {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 2px;
+    z-index: 70;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--red-hot),
+        transparent
+    );
+    box-shadow: 0 0 24px 6px color-mix(in srgb, var(--red) 55%, transparent);
+}
+.mode-sweep.run {
+    animation: sweep 0.75s var(--ease) both;
+}
+@keyframes sweep {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100vh);
+    }
+}
+
+/* ---------------- Hero con modos ---------------- */
+.hero-slides {
+    display: grid;
+}
+.hero-slide {
+    grid-area: 1 / 1;
+    visibility: hidden;
+}
+.hero-slide.is-active {
+    visibility: visible;
+}
+.hero .hero-h {
+    font-family: var(--display);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    font-size: clamp(40px, 5.2vw, 78px);
+    line-height: 1.02;
+}
+.hero .hero-h .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+}
+.hero .hero-h .line span {
+    display: block;
+}
+.js .hero .hero-h .line span {
+    transform: translateY(105%);
+}
+.hero-slide .post .ok {
+    color: var(--red-hot);
+}
+.hero-slide[data-mode='ats'] .post .ok {
+    color: var(--ok);
+}
+
+.hero-modes {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    max-width: 660px;
+}
+.js .hero-modes {
+    opacity: 0;
+}
+.hero-mode {
+    position: relative;
+    display: grid;
+    gap: 4px;
+    text-align: left;
+    border: 0;
+    cursor: pointer;
+    padding: 12px 14px 14px;
+    overflow: hidden;
+    font: 600 12px var(--display);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--steel-dim);
+    background: rgba(255, 255, 255, 0.035);
+    box-shadow: inset 0 0 0 1px var(--line);
+    clip-path: polygon(
+        0 0,
+        calc(100% - 10px) 0,
+        100% 10px,
+        100% 100%,
+        10px 100%,
+        0 calc(100% - 10px)
+    );
+    transition:
+        background 0.3s,
+        box-shadow 0.3s;
+}
+.hero-mode b {
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    color: var(--paper);
+    text-transform: none;
+}
+.hero-mode .dot {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.hero-mode[data-mode='ats'] .dot {
+    background: #e30613;
+}
+.hero-mode[data-mode='rgb'] .dot {
+    background: conic-gradient(
+        #ff2244,
+        #ffd400,
+        #22ff88,
+        #22b4ff,
+        #b04dff,
+        #ff2244
+    );
+}
+.hero-mode[data-mode='frost'] .dot {
+    background: #2fb4ff;
+}
+.hero-mode[data-mode='amber'] .dot {
+    background: #ff9a1f;
+}
+.hero-mode:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+.hero-mode[aria-selected='true'] {
+    color: var(--red-hot);
+    background: color-mix(in srgb, var(--red) 13%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 70%, transparent);
+}
+.hero-mode .bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    background: var(--red);
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
+}
+
+/* Pausar / reanudar el cambio automático (dos barras o triángulo). */
+.hero-pause {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 6px 2px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: 600 12px var(--display);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--steel-dim);
+}
+.hero-pause:hover {
+    color: var(--paper);
+}
+.js .hero-pause {
+    opacity: 0;
+}
+.hero-pause i {
+    width: 10px;
+    height: 10px;
+    border-left: 3px solid currentColor;
+    border-right: 3px solid currentColor;
+}
+.hero-pause[aria-pressed='true'] i {
+    border: 0;
+    border-left: 9px solid currentColor;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    width: 0;
+}
+
+@media (max-width: 640px) {
+    .hero-modes {
+        gap: 6px;
+        margin-top: 32px;
+    }
+    .hero-mode {
+        padding: 10px 9px 12px;
+        font-size: 10px;
+    }
+    .hero-mode b {
+        font-size: 13px;
+    }
+    .hero-mode .dot {
+        display: none;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    html[data-theme='rgb'] {
+        animation: none;
+    }
+    .mode-sweep.run {
+        animation: none;
+    }
+}

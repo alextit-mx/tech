@@ -1,0 +1,124 @@
+{
+    "GeneralInfo": {
+        "IcecatId": 92210486,
+        "Title": "XPG SPECTRIX D41 módulo de memoria 16 GB 2 x 8 GB DDR4 288-pin DIMM",
+        "Brand": "XPG",
+        "BrandPartCode": "AX4U266638G16-DR41",
+        "GTIN": ["4713218467171", "4713218466938"]
+    },
+    "FeaturesGroups": [
+        {
+            "FeatureGroup": {
+                "ID": "185",
+                "Name": {
+                    "Value": "Características",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "16",
+                    "PresentationValue": "16 GB",
+                    "Feature": {
+                        "ID": "11381",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "20",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7432",
+                                "_": "GB",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Memoria interna",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "2 x 8",
+                    "PresentationValue": "2 x 8 GB",
+                    "Feature": {
+                        "ID": "16023",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "20",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7432",
+                                "_": "GB",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Diseño de memoria (módulos x tamaño)",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "DDR4",
+                    "PresentationValue": "DDR4",
+                    "Feature": {
+                        "ID": "427",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Tipo de memoria interna",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "2666",
+                    "PresentationValue": "2666 MHz",
+                    "Feature": {
+                        "ID": "2900",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "18",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7430",
+                                "_": "MHz",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Velocidad de memoria del reloj",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "Gallery": [
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/4f0b43858f46c0be2afba74d26b6a572d4c0b93c.jpg",
+            "PicHeight": "1000",
+            "PicWidth": "1000",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/619d6b2184bb683702394303b9363adb3a56fcc2.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/b7ecf98957f89c63e7eb2b0b9c1310099ef3be81.jpg",
+            "No": "1"
+        },
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/564c56bd94052c1ab8228520950512b1bce9e458.jpg",
+            "PicHeight": "2000",
+            "PicWidth": "2000",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/0e81b89950ee745d4ee9c7fa37701c1f8bc438be.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/eedc87d2f5c65d465e1d0019f04862a01368a373.jpg",
+            "No": "2"
+        }
+    ]
+}

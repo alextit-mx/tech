@@ -72,10 +72,10 @@ function reset(): void {
             <img
                 v-else
                 class="loot-ph"
-                src="/img/ats-emblema.png"
+                src="/img/producto-sin-foto.svg"
                 alt=""
-                width="48"
-                height="48"
+                width="120"
+                height="120"
             />
             <span class="loot-tier">{{ tier.name }}</span>
         </span>

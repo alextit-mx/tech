@@ -1,0 +1,167 @@
+{
+    "GeneralInfo": {
+        "IcecatId": 130931443,
+        "Title": "GIGABYTE GeForce RTX 5060 WINDFORCE OC 8G Tarjeta Gráfica",
+        "Brand": "GIGABYTE",
+        "BrandPartCode": "GV-N5060WF2OC-8GD",
+        "GTIN": ["4719331356323", "0889523050156", "889523050156"]
+    },
+    "FeaturesGroups": [
+        {
+            "FeatureGroup": {
+                "ID": "3",
+                "Name": {
+                    "Value": "Memoria",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "8",
+                    "PresentationValue": "8 GB",
+                    "Feature": {
+                        "ID": "18403",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "20",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7432",
+                                "_": "GB",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Capacidad memoria de adaptador gráfico",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "27",
+                "Name": {
+                    "Value": "Control de energía",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "450",
+                    "PresentationValue": "450 W",
+                    "Feature": {
+                        "ID": "3462",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "44",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7453",
+                                "_": "W",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Suministro de energía al sistema mínimo",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "1x 8-pin",
+                    "PresentationValue": "1x 8-pin",
+                    "Feature": {
+                        "ID": "7992",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Conectores de energia suplementario",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "109",
+                    "PresentationValue": "109 W",
+                    "Feature": {
+                        "ID": "11778",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "44",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7453",
+                                "_": "W",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Potencia de diseño térmico (TDP)",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "14",
+                "Name": {
+                    "Value": "Peso y dimensiones",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "199",
+                    "PresentationValue": "199 mm",
+                    "Feature": {
+                        "ID": "2738",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "24",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7436",
+                                "_": "mm",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Longitud",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "Gallery": [
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/1ab5ce7f4a9d0c089793345d9a57f3508f45ae0a.jpg",
+            "PicHeight": "1659",
+            "PicWidth": "1649",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/30d41f49caeb89df73152cd0aa082c20aa2a9bf2.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/207fcf59a7ad1f8fa0c256168f16bcc9b20e5cb3.jpg",
+            "No": "1"
+        },
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/84b9c652130c7f08f96e6cf16db96394abd73cf0.jpg",
+            "PicHeight": "774",
+            "PicWidth": "1192",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/ff36852b3124b18ad164e598c851ba536b136af4.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/2bce4d1d81989e399905f9a6cbe4093b374512cd.jpg",
+            "No": "2"
+        }
+    ]
+}

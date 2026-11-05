@@ -16,7 +16,10 @@ class HandleAppearance
      */
     public function handle(Request $request, Closure $next): Response
     {
-        View::share('appearance', $request->cookie('appearance') ?? 'system');
+        $appearance = $request->user()?->appearance ?? $request->cookie('appearance') ?? 'system';
+        $appearance = in_array($appearance, ['light', 'dark', 'system'], true) ? $appearance : 'system';
+        View::share('appearance', $appearance);
+        View::share('appearanceForcedDark', $request->routeIs('login', 'password.request', 'password.reset', 'two-factor.login', 'password.confirm'));
 
         return $next($request);
     }

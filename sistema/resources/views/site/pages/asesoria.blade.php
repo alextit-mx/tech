@@ -9,8 +9,9 @@
 
 @section('content')
 <main class="page">
-    <div class="page-head">
-        <h1>Asesoría</h1>
+    <div class="page-head page-head--editorial">
+        <h1>Elige bien.<br />Arma mejor.</h1>
+        <div class="page-head-copy">
         <p class="lede">Te ayudamos a invertir donde se nota: qué pieza importa para lo que haces, qué puede esperar y qué no conviene recortar. Pregúntanos sin compromiso.</p>
         <div class="actions">
             <a class="btn btn-primary" data-whats="Hola Tech Computer, quiero asesoría para elegir mi PC. La quiero para:" href="https://wa.me/525549114435">
@@ -18,10 +19,11 @@
                 <span class="ic"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span></span>
             </a>
         </div>
+        </div>
     </div>
 
     <section class="section" id="segun-uso">
-        <h2>Según para qué la quieres</h2>
+        <h2>Elige según tu uso</h2>
         <ul class="guide">
             <li>
                 <h3>Juegos en 1080p</h3>
@@ -116,7 +118,7 @@
 </main>
 
 <section class="cta-band">
-    <h2>¿Sigues con dudas? Pregúntanos lo que quieras.</h2>
+    <h2>Resolvemos tus dudas</h2>
     <div class="actions">
         <a class="btn btn-primary" data-whats="Hola Tech Computer, tengo una duda:" href="https://wa.me/525549114435">
             Escribir por WhatsApp

@@ -41,7 +41,7 @@ function render() {
         const row = document.createElement("li");
         row.className = "cart-row";
         row.innerHTML = `
-            <a class="cart-thumb" href="${p.url}">${p.image ? `<img src="${p.image}" alt="" width="72" height="72" loading="lazy" />` : `<img class="p-placeholder" src="/img/ats-emblema.png" alt="" width="40" height="40" />`}</a>
+            <a class="cart-thumb showcase ${!p.image || p.image.includes('producto-sin-foto') ? 'is-pending' : ''}" href="${p.url}">${p.image && !p.image.includes('producto-sin-foto') ? `<img src="${p.image}" alt="" width="72" height="72" loading="lazy" />` : `<span class="photo-pending"><img src="/img/ats-emblema.png" alt="" width="48" height="48" /><span>Foto pendiente</span></span>`}</a>
             <div class="cart-info"><a href="${p.url}"></a><small></small></div>
             <label class="cart-qty"><span class="sr-only">Cantidad</span><input type="number" min="1" max="99" value="${item.qty}" /></label>
             <span class="cart-price">${p.price === null ? "Por confirmar" : money(p.price * item.qty)}</span>

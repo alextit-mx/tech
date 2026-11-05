@@ -1,0 +1,146 @@
+{
+    "GeneralInfo": {
+        "IcecatId": 120219619,
+        "Title": "MSI MPG A1000G PCIE5 unidad de fuente de alimentación 1000 W 20+4 pin ATX ATX Negro",
+        "Brand": "MSI",
+        "BrandPartCode": "824142293126",
+        "GTIN": ["0824142293126", "824142293126"]
+    },
+    "FeaturesGroups": [
+        {
+            "FeatureGroup": {
+                "ID": "27",
+                "Name": {
+                    "Value": "Control de energía",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "1000",
+                    "PresentationValue": "1000 W",
+                    "Feature": {
+                        "ID": "10713",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "44",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7453",
+                                "_": "W",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Potencia total",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "12",
+                "Name": {
+                    "Value": "Puertos e Interfaces",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "6",
+                    "PresentationValue": "6",
+                    "Feature": {
+                        "ID": "7695",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Conectores de poder PCI Express (6 + 2 pin)",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "1",
+                    "PresentationValue": "1",
+                    "Feature": {
+                        "ID": "45531",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Conectores de alimentación PCI Express (16 pines)",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "184",
+                "Name": {
+                    "Value": "Desempeño",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "80 PLUS Gold",
+                    "PresentationValue": "80 PLUS Gold",
+                    "Feature": {
+                        "ID": "8110",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Certificación 80 PLUS",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "Gallery": [
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/239025393f2662e8c94db4f7e4a18ce53a75cdc7.jpg",
+            "PicHeight": "819",
+            "PicWidth": "1024",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/066f8ee18f93d986cce403a8871bb5e5c1b5afe0.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/2541b9141a24554d482f181268028bdfb2841b99.jpg",
+            "No": "1"
+        },
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/e0663887e8b8f90694bced601b65da8025b9050a.jpg",
+            "PicHeight": "819",
+            "PicWidth": "1024",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/ddaab398ddca5b388375b96e4a5bcd40af6f1122.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/10ce35e2503bebc89bcd1ccbc8fb29d215187710.jpg",
+            "No": "2"
+        }
+    ]
+}

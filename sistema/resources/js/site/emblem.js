@@ -11,15 +11,16 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile }) {
+    const lowPower = mobile || navigator.connection?.saveData || navigator.hardwareConcurrency <= 4 || (navigator.deviceMemory && navigator.deviceMemory <= 4);
     let renderer;
     try {
-        renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: "high-performance" });
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: lowPower ? "low-power" : "high-performance" });
     } catch {
         document.documentElement.classList.add("no-webgl");
         return;
     }
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, lowPower ? 1.25 : 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 0);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -30,7 +31,9 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
     const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 9);
 
-    const points = await emblemPoints(src, mobile ? 5200 : 11000, mobile);
+    const points = await emblemPoints(src, lowPower ? (mobile ? 2800 : 4200) : 11000, mobile);
+    canvas.dataset.particleCount = String(points.length / 3);
+    canvas.dataset.lowPower = String(Boolean(lowPower));
     const count = points.length / 3;
     const start = new Float32Array(count * 3);
     const scatter = new Float32Array(count * 3);
@@ -45,11 +48,10 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
         start[i * 3] = r * s * Math.cos(a);
         start[i * 3 + 1] = r * s * Math.sin(a);
         start[i * 3 + 2] = r * u - 2;
-        /* Vista explotada: hacia afuera desde el centro, con profundidad. */
-        const len = Math.hypot(x, y) + 0.001, push = 1.6 + Math.random() * 3.2;
-        scatter[i * 3] = x + (x / len) * push + (Math.random() - 0.5) * 1.2;
-        scatter[i * 3 + 1] = y + (y / len) * push + (Math.random() - 0.5) * 1.2;
-        scatter[i * 3 + 2] = z + (Math.random() - 0.5) * 7;
+        /* La dispersión cubre la ventana y permanece detrás del catálogo. */
+        scatter[i * 3] = (Math.random() - 0.5) * 5.8 * camera.aspect;
+        scatter[i * 3 + 1] = (Math.random() - 0.5) * 5.8;
+        scatter[i * 3 + 2] = (Math.random() - 0.5) * 4;
         delay[i] = Math.random() * 0.55 + (y + 2.2) / 4.4 * 0.25;
         seed[i] = Math.random();
     }
@@ -61,15 +63,15 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
     geometry.setAttribute("aDelay", new THREE.BufferAttribute(delay, 1));
     geometry.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
 
-    const red = getComputedStyle(document.documentElement).getPropertyValue("--red").trim();
     const uniforms = {
         uTime: { value: 0 },
         uAssemble: { value: reduced ? 1 : 0 },
         uScatter: { value: 0 },
         uSize: { value: mobile ? 22 : 26 },
         uPixelRatio: { value: renderer.getPixelRatio() },
-        uColor: { value: new THREE.Color(red) },
+        uColor: { value: new THREE.Color("#E30613") },
         uHot: { value: new THREE.Color("#FFE6E0") },
+        uRainbow: { value: 0 },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -86,6 +88,7 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
             attribute float aSeed;
             varying float vHeat;
             varying float vAlpha;
+            varying float vHue;
 
             float easeOut(float x) { return 1.0 - pow(1.0 - x, 3.0); }
 
@@ -95,6 +98,9 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
                 vec3 pos = mix(aStart, position, e);
                 pos += 0.018 * e * vec3(sin(uTime * 1.3 + aSeed * 20.0), cos(uTime * 1.1 + aSeed * 17.0), sin(uTime * 0.9 + aSeed * 13.0));
                 pos = mix(pos, aScatter, smoothstep(0.0, 1.0, uScatter));
+
+                /* Modo RGB: el color recorre el emblema en diagonal. */
+                vHue = fract((position.x + position.y) * 0.09 - uTime * 0.12);
 
                 vec4 mv = modelViewMatrix * vec4(pos, 1.0);
                 gl_Position = projectionMatrix * mv;
@@ -109,13 +115,18 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
             precision mediump float;
             uniform vec3 uColor;
             uniform vec3 uHot;
+            uniform float uRainbow;
             varying float vHeat;
             varying float vAlpha;
+            varying float vHue;
+
+            vec3 hue(float h) { return clamp(abs(mod(h * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0); }
 
             void main() {
                 float d = length(gl_PointCoord - 0.5);
                 float a = smoothstep(0.5, 0.05, d);
-                vec3 color = mix(uColor, uHot, clamp(vHeat, 0.0, 1.0));
+                vec3 base = mix(uColor, hue(vHue), uRainbow);
+                vec3 color = mix(base, uHot, clamp(vHeat, 0.0, 1.0));
                 gl_FragColor = vec4(color, a * vAlpha);
             }
         `,
@@ -132,10 +143,14 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
     composer.addPass(new OutputPass());
 
     /* A la derecha en escritorio; arriba y más chico en celular. */
+    const origin = new THREE.Vector3();
+    let baseScale = 1;
     const layout = () => {
         const wide = window.innerWidth > 860;
-        rig.position.set(wide ? 2.3 * Math.min(1, camera.aspect / 1.6) : 0, wide ? 0.1 : 1.36, 0);
-        rig.scale.setScalar(wide ? 1 : 0.46);
+        origin.set(wide ? 2.3 * Math.min(1, camera.aspect / 1.6) : 0, wide ? 0.1 : 1.36, 0);
+        baseScale = wide ? 1 : 0.46;
+        rig.position.copy(origin);
+        rig.scale.setScalar(baseScale);
     };
     layout();
 
@@ -150,9 +165,9 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
 
     if (!reduced) gsap.to(uniforms.uAssemble, { value: 1, duration: 3.2, ease: "power2.inOut", delay: 0.2 });
 
-    /* Al bajar: vista explotada, giro y se apaga para dejar leer. */
-    const state = { scatter: 0, turn: 0 };
-    if (!reduced && scatterTrigger) {
+    /* La posición depende del scroll; no se fija ni se desplaza el contenido. */
+    const state = { scatter: 0, turn: 0, pulse: 0 };
+    if (scatterTrigger) {
         gsap.registerPlugin(ScrollTrigger);
         ScrollTrigger.create({
             trigger: scatterTrigger,
@@ -162,7 +177,7 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
             onUpdate: (self) => {
                 state.scatter = self.progress;
                 state.turn = self.progress;
-                canvas.style.opacity = String(1 - self.progress * 0.75);
+                canvas.style.opacity = String(1 - self.progress * 0.25);
             },
         });
     }
@@ -174,20 +189,54 @@ export async function mountEmblem({ canvas, src, scatterTrigger, reduced, mobile
     });
 
     const clock = new THREE.Clock();
-    let visible = true;
-    document.addEventListener("visibilitychange", () => (visible = !document.hidden));
-
-    renderer.setAnimationLoop(() => {
+    const render = () => {
         const delta = Math.min(clock.getDelta(), 0.05);
-        if (!visible) return;
         const k = 1 - Math.pow(1 - 0.06, delta * 60);
-        uniforms.uTime.value += delta;
-        uniforms.uScatter.value += (state.scatter - uniforms.uScatter.value) * k;
+        if (!reduced) uniforms.uTime.value += delta;
+        uniforms.uScatter.value += (state.scatter + state.pulse - uniforms.uScatter.value) * (reduced ? 1 : k);
+        rig.position.copy(origin).multiplyScalar(1 - state.scatter);
+        rig.scale.setScalar(baseScale + (1 - baseScale) * state.scatter);
         const targetY = pointer.x * 0.5 + state.turn * 0.9 + (reduced ? 0 : Math.sin(uniforms.uTime.value * 0.25) * 0.12);
         rig.rotation.y += (targetY - rig.rotation.y) * k;
         rig.rotation.x += (pointer.y * 0.3 - rig.rotation.x) * k;
         composer.render();
-    });
+    };
+    const visibility = () => {
+        renderer.setAnimationLoop(null);
+        canvas.dataset.animationState = document.hidden ? 'paused' : reduced ? 'static' : 'playing';
+        clock.getDelta();
+        if (!document.hidden) {
+            if (reduced) render();
+            else renderer.setAnimationLoop(render);
+        }
+    };
+    document.addEventListener('visibilitychange', visibility);
+    if (reduced) {
+        window.addEventListener('scroll', () => { if (!document.hidden) render(); }, { passive: true });
+        window.addEventListener('resize', render);
+    }
+    visibility();
+
+    /* Paletas de los modos del hero. Al cambiar, el emblema se abre un instante y se vuelve a armar con el color nuevo. */
+    const palettes = {
+        ats: { color: "#E30613", hot: "#FFE6E0", rainbow: 0 },
+        rgb: { color: "#E30613", hot: "#FFFFFF", rainbow: 1 },
+        frost: { color: "#2FB4FF", hot: "#E8F8FF", rainbow: 0 },
+        amber: { color: "#FF9A1F", hot: "#FFF2DC", rainbow: 0 },
+    };
+    return {
+        setPalette(name) {
+            const p = palettes[name] ?? palettes.ats;
+            const color = new THREE.Color(p.color);
+            const hot = new THREE.Color(p.hot);
+            const duration = reduced ? 0 : 0.9;
+            gsap.to(uniforms.uColor.value, { r: color.r, g: color.g, b: color.b, duration });
+            gsap.to(uniforms.uHot.value, { r: hot.r, g: hot.g, b: hot.b, duration });
+            gsap.to(uniforms.uRainbow, { value: p.rainbow, duration });
+            if (reduced) requestAnimationFrame(render);
+            if (!reduced) gsap.fromTo(state, { pulse: 0.32 }, { pulse: 0, duration: 1.1, ease: "power2.out" });
+        },
+    };
 }
 
 /* Cada píxel rojo del emblema es una partícula (con algo de grosor). */

@@ -10,7 +10,17 @@ class Customer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'phone', 'email', 'rfc', 'notes'];
+    protected $fillable = ['name', 'phone', 'email', 'rfc', 'notes', 'kind', 'company', 'position', 'legal_name', 'tax_regime', 'cfdi_use', 'tax_zip', 'street', 'ext_number', 'int_number', 'neighborhood', 'city', 'state', 'zip', 'address_notes'];
+
+    protected $attributes = ['kind' => 'mostrador'];
+
+    public function addressLine(): string
+    {
+        return implode(', ', array_filter([
+            trim(implode(' ', array_filter([$this->street, $this->ext_number, $this->int_number ? 'Int. '.$this->int_number : null]))),
+            $this->neighborhood, $this->city, $this->state, $this->zip ? 'CP '.$this->zip : null,
+        ]));
+    }
 
     public function quotes(): HasMany
     {

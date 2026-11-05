@@ -1,0 +1,2969 @@
+[
+    {
+        "name": "compatible",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [],
+        "issues": []
+    },
+    {
+        "name": "socket",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM5",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "socket",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "socket",
+                "message": "El procesador es AM4 y la tarjeta madre AM5.",
+                "slots": ["cpu", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "platform memory",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM5",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "socket",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "socket",
+                "message": "El procesador AM5 usa DDR5, no DDR4.",
+                "slots": ["cpu", "ram"]
+            }
+        ]
+    },
+    {
+        "name": "memory type",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR5",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "memory_type",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "memory_type",
+                "message": "La memoria DDR5 no entra en una tarjeta DDR4.",
+                "slots": ["ram", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "form factor",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "form_factor",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "form_factor",
+                "message": "La tarjeta madre mATX no cabe en el gabinete.",
+                "slots": ["motherboard", "case"]
+            }
+        ]
+    },
+    {
+        "name": "ram slots",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 8
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "ram_slots",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "ram_slots",
+                "message": "La RAM tiene 8 módulos y la tarjeta madre solo 4 ranuras.",
+                "slots": ["ram", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "ram max",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 256,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "ram_max",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "ram_max",
+                "message": "La RAM suma 256 GB y la tarjeta madre admite 128 GB.",
+                "slots": ["ram", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "unsupported chipset",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 1000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "chipset_cpu",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "chipset_cpu",
+                "message": "El chipset B550 no soporta Ryzen 1000.",
+                "slots": ["cpu", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "bios",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B450",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "chipset_cpu",
+                "level": "riesgo"
+            }
+        ],
+        "issues": [
+            {
+                "level": "riesgo",
+                "code": "chipset_cpu",
+                "message": "El chipset B450 requiere verificar o actualizar el BIOS para Ryzen 5000.",
+                "slots": ["cpu", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "board power",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 201,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 250
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "board_class",
+                "level": "desbalance"
+            }
+        ],
+        "issues": [
+            {
+                "level": "desbalance",
+                "code": "board_class",
+                "message": "El chipset B550 (clase 3) queda corto para el procesador de nivel 3 y 201 W máximos.",
+                "slots": ["cpu", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "board tier",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 6
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "A520",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "board_class",
+                "level": "desbalance"
+            }
+        ],
+        "issues": [
+            {
+                "level": "desbalance",
+                "code": "board_class",
+                "message": "El chipset A520 (clase 2) queda corto para el procesador de nivel 6 y 88 W máximos.",
+                "slots": ["cpu", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "cooler socket",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "cooler_socket",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "cooler_socket",
+                "message": "El enfriamiento no es para socket AM4.",
+                "slots": ["cpu", "cooler"]
+            }
+        ]
+    },
+    {
+        "name": "cooler power",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 65
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "cooler_power",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "cooler_power",
+                "message": "El enfriamiento disipa 65 W y el procesador puede consumir 88 W.",
+                "slots": ["cpu", "cooler"]
+            }
+        ]
+    },
+    {
+        "name": "cooler fallback",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 80
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "cooler_power",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "cooler_power",
+                "message": "El enfriamiento disipa 80 W y el procesador puede consumir 87.75 W.",
+                "slots": ["cpu", "cooler"]
+            }
+        ]
+    },
+    {
+        "name": "gpu length",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 330,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "gpu_length",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "gpu_length",
+                "message": "La tarjeta de video mide 330 mm y el gabinete admite 320 mm.",
+                "slots": ["gpu", "case"]
+            }
+        ]
+    },
+    {
+        "name": "gpu clearance",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 315,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "gpu_length",
+                "level": "riesgo"
+            }
+        ],
+        "issues": [
+            {
+                "level": "riesgo",
+                "code": "gpu_length",
+                "message": "La tarjeta de video mide 315 mm y el gabinete admite 320 mm. Solo quedan 5 mm de margen.",
+                "slots": ["gpu", "case"]
+            }
+        ]
+    },
+    {
+        "name": "gpu boundary",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 310,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [],
+        "issues": []
+    },
+    {
+        "name": "psu watts",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 500,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "psu_watts",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "psu_watts",
+                "message": "La fuente entrega 500 W y el armado requiere al menos 550 W.",
+                "slots": ["cpu", "gpu", "psu"]
+            }
+        ]
+    },
+    {
+        "name": "psu margin",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 142,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 200,
+                    "recommended_psu_w": 400,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 450,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "psu_watts",
+                "level": "desbalance"
+            }
+        ],
+        "issues": [
+            {
+                "level": "desbalance",
+                "code": "psu_watts",
+                "message": "La fuente entrega 450 W; se recomiendan 550 W para tener margen.",
+                "slots": ["psu", "cpu", "gpu"]
+            }
+        ]
+    },
+    {
+        "name": "psu unsafe",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 180,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "Sin certificación",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "psu_quality",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "psu_quality",
+                "message": "La fuente sin certificación no es adecuada para una tarjeta de video de 180 W.",
+                "slots": ["psu", "gpu"]
+            }
+        ]
+    },
+    {
+        "name": "psu quality",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 4
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Bronze",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "psu_quality",
+                "level": "desbalance"
+            }
+        ],
+        "issues": [
+            {
+                "level": "desbalance",
+                "code": "psu_quality",
+                "message": "La tarjeta de video de nivel 4 requiere una fuente 80+ Gold o superior; la actual es 80+ Bronze.",
+                "slots": ["gpu", "psu"]
+            }
+        ]
+    },
+    {
+        "name": "8 pin shortage",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "3x8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "gpu_power_connector",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "gpu_power_connector",
+                "message": "La tarjeta de video requiere 3 conectores de 8 pines y la fuente tiene 2.",
+                "slots": ["gpu", "psu"]
+            }
+        ]
+    },
+    {
+        "name": "16 pin adapter",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "16-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": false,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "gpu_power_connector",
+                "level": "riesgo"
+            }
+        ],
+        "issues": [
+            {
+                "level": "riesgo",
+                "code": "gpu_power_connector",
+                "message": "La tarjeta de video usa 16 pines y la fuente no tiene conector nativo. Funciona con el adaptador de la tarjeta y 1 conectores de 8 pines.",
+                "slots": ["gpu", "psu"]
+            }
+        ]
+    },
+    {
+        "name": "16 pin shortage",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 360,
+                    "recommended_psu_w": 850,
+                    "length_mm": 280,
+                    "power_connector": "16-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 850,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": false,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "gpu_power_connector",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "gpu_power_connector",
+                "message": "La tarjeta de video usa 16 pines y la fuente no tiene conector nativo. Necesita 3 conectores de 8 pines para el adaptador y la fuente tiene 2.",
+                "slots": ["gpu", "psu"]
+            }
+        ]
+    },
+    {
+        "name": "case double psu",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": true
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "case_has_psu",
+                "level": "desbalance"
+            }
+        ],
+        "issues": [
+            {
+                "level": "desbalance",
+                "code": "case_has_psu",
+                "message": "El gabinete incluye fuente y elegiste otra: pagas dos fuentes.",
+                "slots": ["case", "psu"]
+            }
+        ]
+    },
+    {
+        "name": "case unsafe psu",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": true
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "case_has_psu",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "case_has_psu",
+                "message": "La fuente incluida del gabinete no está confirmada para una tarjeta de video de 145 W.",
+                "slots": ["case", "gpu"]
+            }
+        ]
+    },
+    {
+        "name": "no video",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "no_video",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "no_video",
+                "message": "El procesador no tiene gráficos integrados y falta una tarjeta de video.",
+                "slots": ["cpu", "gpu"]
+            }
+        ]
+    },
+    {
+        "name": "igpu",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": true,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [],
+        "issues": []
+    },
+    {
+        "name": "estimated cooler",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 65
+                },
+                "estimated": ["max_tdp_w"]
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "cooler_power",
+                "level": "riesgo"
+            }
+        ],
+        "issues": [
+            {
+                "level": "riesgo",
+                "code": "cooler_power",
+                "message": "El enfriamiento disipa 65 W y el procesador puede consumir 88 W. (dato por confirmar)",
+                "slots": ["cpu", "cooler"]
+            }
+        ]
+    },
+    {
+        "name": "unrelated estimated does not downgrade",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": ["socket"]
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 65
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "cooler_power",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "cooler_power",
+                "message": "El enfriamiento disipa 65 W y el procesador puede consumir 88 W.",
+                "slots": ["cpu", "cooler"]
+            }
+        ]
+    },
+    {
+        "name": "real failed build",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 5000",
+                    "tdp_w": 105,
+                    "power_w": 142,
+                    "igpu": false,
+                    "tier": 5
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "A320",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 2,
+                    "max_ram_gb": 32
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 16,
+                    "modules": 4,
+                    "speed_mhz": 2666
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 360,
+                    "recommended_psu_w": 850,
+                    "length_mm": 306,
+                    "power_connector": "16-pin",
+                    "tier": 5
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 600,
+                    "certification": "Sin certificación",
+                    "pcie_16pin": false,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5"],
+                    "max_tdp_w": 95
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 300,
+                    "includes_psu": true
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 4000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "ram_slots",
+                "level": "incompatible"
+            },
+            {
+                "code": "chipset_cpu",
+                "level": "riesgo"
+            },
+            {
+                "code": "board_class",
+                "level": "desbalance"
+            },
+            {
+                "code": "cooler_power",
+                "level": "incompatible"
+            },
+            {
+                "code": "gpu_length",
+                "level": "incompatible"
+            },
+            {
+                "code": "psu_watts",
+                "level": "incompatible"
+            },
+            {
+                "code": "psu_quality",
+                "level": "incompatible"
+            },
+            {
+                "code": "gpu_power_connector",
+                "level": "incompatible"
+            },
+            {
+                "code": "case_has_psu",
+                "level": "desbalance"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "ram_slots",
+                "message": "La RAM tiene 4 módulos y la tarjeta madre solo 2 ranuras.",
+                "slots": ["ram", "motherboard"]
+            },
+            {
+                "level": "riesgo",
+                "code": "chipset_cpu",
+                "message": "El chipset A320 requiere verificar o actualizar el BIOS para Ryzen 5000.",
+                "slots": ["cpu", "motherboard"]
+            },
+            {
+                "level": "desbalance",
+                "code": "board_class",
+                "message": "El chipset A320 (clase 1) queda corto para el procesador de nivel 5 y 142 W máximos.",
+                "slots": ["cpu", "motherboard"]
+            },
+            {
+                "level": "incompatible",
+                "code": "cooler_power",
+                "message": "El enfriamiento disipa 95 W y el procesador puede consumir 142 W.",
+                "slots": ["cpu", "cooler"]
+            },
+            {
+                "level": "incompatible",
+                "code": "gpu_length",
+                "message": "La tarjeta de video mide 306 mm y el gabinete admite 300 mm.",
+                "slots": ["gpu", "case"]
+            },
+            {
+                "level": "incompatible",
+                "code": "psu_watts",
+                "message": "La fuente entrega 600 W y el armado requiere al menos 850 W.",
+                "slots": ["cpu", "gpu", "psu"]
+            },
+            {
+                "level": "incompatible",
+                "code": "psu_quality",
+                "message": "La fuente sin certificación no es adecuada para una tarjeta de video de 360 W.",
+                "slots": ["psu", "gpu"]
+            },
+            {
+                "level": "incompatible",
+                "code": "gpu_power_connector",
+                "message": "La tarjeta de video usa 16 pines y la fuente no tiene conector nativo. Necesita 3 conectores de 8 pines para el adaptador y la fuente tiene 2.",
+                "slots": ["gpu", "psu"]
+            },
+            {
+                "level": "desbalance",
+                "code": "case_has_psu",
+                "message": "El gabinete incluye fuente y elegiste otra: pagas dos fuentes.",
+                "slots": ["case", "psu"]
+            }
+        ]
+    },
+    {
+        "name": "Ryzen 3000G requires compatible chipset",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "AM4",
+                    "series": "Ryzen 3000G",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "AM4",
+                    "chipset": "B550",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5", "AM4"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "chipset_cpu",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "chipset_cpu",
+                "message": "El chipset B550 no soporta Ryzen 3000G.",
+                "slots": ["cpu", "motherboard"]
+            }
+        ]
+    },
+    {
+        "name": "WRX90 requires Threadripper PRO",
+        "parts": {
+            "cpu": {
+                "specs": {
+                    "socket": "sTR5",
+                    "series": "Threadripper 9000",
+                    "tdp_w": 65,
+                    "power_w": 88,
+                    "igpu": false,
+                    "tier": 3
+                },
+                "estimated": []
+            },
+            "motherboard": {
+                "specs": {
+                    "socket": "sTR5",
+                    "chipset": "WRX90",
+                    "memory_type": "DDR4",
+                    "form_factor": "mATX",
+                    "ram_slots": 4,
+                    "max_ram_gb": 128
+                },
+                "estimated": []
+            },
+            "ram": {
+                "specs": {
+                    "memory_type": "DDR4",
+                    "capacity_gb": 32,
+                    "modules": 2
+                },
+                "estimated": []
+            },
+            "gpu": {
+                "specs": {
+                    "tdp_w": 145,
+                    "recommended_psu_w": 550,
+                    "length_mm": 280,
+                    "power_connector": "8-pin",
+                    "tier": 2
+                },
+                "estimated": []
+            },
+            "psu": {
+                "specs": {
+                    "watts": 650,
+                    "certification": "80+ Gold",
+                    "pcie_16pin": true,
+                    "pcie_8pin": 2
+                },
+                "estimated": []
+            },
+            "cooler": {
+                "specs": {
+                    "sockets": ["AM4", "AM5", "sTR5"],
+                    "max_tdp_w": 200
+                },
+                "estimated": []
+            },
+            "case": {
+                "specs": {
+                    "form_factors": ["mATX", "ITX"],
+                    "max_gpu_length_mm": 320,
+                    "includes_psu": false
+                },
+                "estimated": []
+            },
+            "storage": {
+                "specs": {
+                    "type": "NVMe",
+                    "capacity_gb": 1000
+                },
+                "estimated": []
+            }
+        },
+        "expected": [
+            {
+                "code": "chipset_cpu",
+                "level": "incompatible"
+            }
+        ],
+        "issues": [
+            {
+                "level": "incompatible",
+                "code": "chipset_cpu",
+                "message": "El chipset WRX90 no soporta Threadripper 9000.",
+                "slots": ["cpu", "motherboard"]
+            }
+        ]
+    }
+]

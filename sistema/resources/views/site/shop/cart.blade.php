@@ -14,8 +14,7 @@
 @section('content')
 <main class="page shop">
     <div class="page-head">
-        <p class="eyebrow">Mi cotización</p>
-        <h1>Tu lista</h1>
+        <h1>Mi cotización</h1>
         <p class="intro">Mándala y te respondemos por WhatsApp con existencias y precio del día. No pagas nada todavía.</p>
     </div>
 

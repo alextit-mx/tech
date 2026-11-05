@@ -9,14 +9,16 @@
 
 @section('content')
 <main class="page">
-    <div class="page-head">
-        <h1>Servicio técnico</h1>
+    <div class="page-head page-head--editorial">
+        <h1>Reparamos<br />tu PC.</h1>
+        <div class="page-head-copy">
         <p class="lede">Mantenimiento, reparación y actualización de tu PC. Revisamos, te explicamos qué tiene y qué recomendamos hacer, y te la entregamos probada.</p>
         <div class="actions">
             <a class="btn btn-primary" data-whats="Hola Tech Computer, mi PC necesita servicio. Le pasa lo siguiente:" href="https://wa.me/525549114435">
                 Contarnos qué le pasa
                 <span class="ic"><span class="mask" style="--icon: url('https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/whatsapp.svg')"></span></span>
             </a>
+        </div>
         </div>
     </div>
 
@@ -107,7 +109,7 @@
 </main>
 
 <section class="cta-band">
-    <h2>Tráela al local o cuéntanos por WhatsApp qué le pasa.</h2>
+    <h2>Cuéntanos qué le pasa</h2>
     <div class="actions">
         <a class="btn btn-primary" data-whats="Hola Tech Computer, mi PC necesita servicio. Le pasa lo siguiente:" href="https://wa.me/525549114435">
             Escribir por WhatsApp

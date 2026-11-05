@@ -28,6 +28,16 @@ class Category extends Model
         return $this->hasMany(self::class, 'parent_id')->orderBy('sort');
     }
 
+    protected static function booted(): void
+    {
+        static::updated(function ($record) {
+            if ($record->wasChanged('name')) {
+                // El respaldo consulta el nombre vigente hasta la siguiente indexación.
+                $record->products()->update(['search_text' => null]);
+            }
+        });
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);

@@ -1,0 +1,32 @@
+{
+    "FeaturesGroups": [
+        {
+            "Features": [
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Interfaz de unidad de almacenamiento"
+                        }
+                    },
+                    "PresentationValue": "PCI Express 4.0"
+                },
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Factor de forma de disco SSD"
+                        }
+                    },
+                    "PresentationValue": "M.2"
+                },
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Capacidad del SSD"
+                        }
+                    },
+                    "PresentationValue": "1 TB"
+                }
+            ]
+        }
+    ]
+}

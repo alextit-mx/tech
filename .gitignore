@@ -4,3 +4,15 @@
 
 # Copias comprimidas de assets/
 *.zip
+
+# Listas de precios y su conversión: datos del negocio, el repo es público
+LP_*.xlsx
+*.xlsx
+importacion/
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+# Capturas de verificación
+.delegate/shots/
+# Capturas y reportes de las revisiones de diseño (taste-skill): pesados y solo de trabajo
+sistema/.taste-skill/
+.taste-skill/

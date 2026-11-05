@@ -1,0 +1,32 @@
+{
+    "FeaturesGroups": [
+        {
+            "Features": [
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Interfaz"
+                        }
+                    },
+                    "PresentationValue": "SATA III"
+                },
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Tipo de unidad"
+                        }
+                    },
+                    "PresentationValue": "SSD"
+                },
+                {
+                    "Feature": {
+                        "Name": {
+                            "Value": "Capacidad del SSD"
+                        }
+                    },
+                    "PresentationValue": "500 GB"
+                }
+            ]
+        }
+    ]
+}

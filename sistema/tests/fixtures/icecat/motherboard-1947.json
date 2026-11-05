@@ -1,0 +1,220 @@
+{
+    "GeneralInfo": {
+        "IcecatId": 81634171,
+        "Title": "GIGABYTE A520M DS3H AC Placa Base - Procesadores AMD Ryzen Serie 5000, VRM de 5+3 fases, hasta 4733 MHz DDR5 (OC), 1xPCIe 3.0 M.2, LAN GbE, WIFI 5, USB 3.2 Gen 1",
+        "Brand": "GIGABYTE",
+        "BrandPartCode": "A520M DS3H AC",
+        "GTIN": ["4719331810696", "0889523023891", "889523023891"]
+    },
+    "FeaturesGroups": [
+        {
+            "FeatureGroup": {
+                "ID": "1",
+                "Name": {
+                    "Value": "Procesador",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "Socket AM4",
+                    "PresentationValue": "Zócalo AM4",
+                    "Feature": {
+                        "ID": "2325",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Socket de procesador",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "3",
+                "Name": {
+                    "Value": "Memoria",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "DDR4-SDRAM",
+                    "PresentationValue": "DDR4-SDRAM",
+                    "Feature": {
+                        "ID": "7482",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "tipos de memoria compatibles",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "4",
+                    "PresentationValue": "4",
+                    "Feature": {
+                        "ID": "18674",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Número de ranuras de memoria",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "128",
+                    "PresentationValue": "128 GB",
+                    "Feature": {
+                        "ID": "1452",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "20",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "7432",
+                                "_": "GB",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Memoria interna máxima",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "185",
+                "Name": {
+                    "Value": "Características",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "AMD A520",
+                    "PresentationValue": "AMD A520",
+                    "Feature": {
+                        "ID": "436",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Chipset",
+                            "Language": "ES"
+                        }
+                    }
+                },
+                {
+                    "Value": "Micro ATX",
+                    "PresentationValue": "micro ATX",
+                    "Feature": {
+                        "ID": "1262",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Factor de forma",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "FeatureGroup": {
+                "ID": "124",
+                "Name": {
+                    "Value": "Ranuras de expansión",
+                    "Language": "ES"
+                }
+            },
+            "Features": [
+                {
+                    "Value": "1",
+                    "PresentationValue": "1",
+                    "Feature": {
+                        "ID": "20894",
+                        "Sign": "",
+                        "Measure": {
+                            "ID": "29",
+                            "Sign": "",
+                            "Signs": {
+                                "ID": "",
+                                "_": "",
+                                "Language": "ES"
+                            }
+                        },
+                        "Name": {
+                            "Value": "Número de ranuras M.2 (M)",
+                            "Language": "ES"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "Gallery": [
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/667ef1b055d40653449203797eea33ad5dc435ec.jpg",
+            "PicHeight": "711",
+            "PicWidth": "1078",
+            "Pic500x500": "https://images.icecat.biz/img/gallery_mediums/ac668939d76453ab711ca481df4dbb3e0a28da0b.jpg",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/e005ebaae7d3a3da56dc6b0df4f9a01fe08998f0.jpg",
+            "No": "1"
+        },
+        {
+            "Pic": "https://images.icecat.biz/img/gallery/c3ffef8d59ab61bfa4bfba1452c503bd56c80ec5.jpg",
+            "PicHeight": "467",
+            "PicWidth": "447",
+            "Pic500x500": "",
+            "LowPic": "https://images.icecat.biz/img/gallery_lows/fe3483f232933ca37643732cc132db8c62ff617d.jpg",
+            "No": "2"
+        }
+    ]
+}

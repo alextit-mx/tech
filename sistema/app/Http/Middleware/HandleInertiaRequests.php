@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Branding;
+use App\Support\PendingSpecs;
+use App\Support\Sat;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -38,6 +41,9 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'branding' => fn () => Branding::shared(),
+            'sat' => fn () => $request->user() ? Sat::catalogs() : null,
+            'pendingSpecsCount' => fn () => $request->user()?->can('edit-products') ? array_sum(PendingSpecs::counts()) : null,
             'auth' => [
                 'user' => $request->user(),
             ],

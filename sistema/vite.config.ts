@@ -78,6 +78,8 @@ export default defineConfig({
         htmlWhitespaceSensitivity: 'css',
         ignorePatterns: [
             '.github/**',
+            '.taste-skill/**',
+            '.playwright-cli/**',
             'composer.json',
             'resources/js/components/ui/*',
             'resources/views/mail/*',

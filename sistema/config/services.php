@@ -2,6 +2,8 @@
 
 return [
 
+    'icecat' => ['username' => env('ICECAT_USERNAME')],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

@@ -14,8 +14,8 @@
 @section('content')
 <main class="page shop quote-page">
     <div class="page-head">
-        <p class="eyebrow">{{ \App\Models\Quote::SOURCES[$quote->source] ?? 'Cotización' }}</p>
         <h1 class="folio">{{ $quote->folio }}</h1>
+        <p class="quote-source">{{ \App\Models\Quote::SOURCES[$quote->source] ?? 'Cotización' }}</p>
         @if ($quote->build_name)<p class="lede">{{ $quote->build_name }}</p>@endif
         <p class="intro">Para {{ $quote->customer->name }} · vigente hasta el {{ $quote->valid_until->translatedFormat('j \d\e F \d\e Y') }}</p>
     </div>

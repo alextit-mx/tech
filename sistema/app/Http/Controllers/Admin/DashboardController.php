@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quote;
+use App\Models\ServiceOrder;
+use App\Models\ServicePlan;
 use App\Models\User;
+use App\Models\Warranty;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -44,6 +47,25 @@ class DashboardController extends Controller
             'sellers' => $sellers,
             'margin' => $margin,
             'recent' => Quote::with('customer:id,name')->whereNull('user_id')->latest()->limit(6)->get(['id', 'folio', 'customer_id', 'source', 'total', 'build_name', 'created_at', 'status', 'valid_until']),
+            'service' => [
+                'statuses' => ServiceOrder::STATUSES,
+                'open' => ServiceOrder::whereIn('status', ServiceOrder::OPEN)->selectRaw('status, count(*) total')->groupBy('status')->pluck('total', 'status'),
+            ],
+            'expiring' => $this->expiring(),
         ]);
+    }
+
+    /** Garantías (por partida) y pólizas que vencen en los próximos 30 días. */
+    private function expiring(): array
+    {
+        $limit = now()->addDays(30)->endOfDay();
+        $warranties = Warranty::with('customer:id,name', 'items')->whereNull('voided_at')->where('starts_at', '>=', now()->subMonths(60))->get()
+            ->filter(fn (Warranty $w) => $w->items->contains(fn ($i) => $i->isActive() && $i->endsAt()->lte($limit)))
+            ->map(fn (Warranty $w) => ['folio' => $w->folio, 'customer' => $w->customer->name, 'ends_at' => $w->items->filter->isActive()->min(fn ($i) => $i->endsAt())->toDateString()])
+            ->values();
+        $plans = ServicePlan::with('customer:id,name')->whereBetween('ends_at', [today(), $limit])->get()
+            ->map(fn (ServicePlan $p) => ['folio' => $p->folio, 'customer' => $p->customer->name, 'ends_at' => $p->ends_at->toDateString()]);
+
+        return ['warranties' => $warranties, 'plans' => $plans];
     }
 }

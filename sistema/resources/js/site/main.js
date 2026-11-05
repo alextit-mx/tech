@@ -1,4 +1,14 @@
 import "../../css/site.css";
 import "../../css/shop.css";
+import "../../css/modes.css";
+import "../../css/site-design.css";
+import "../../css/header.css";
+import "../../css/catalog-hud.css";
+import "../../css/shop-hero.css";
 import "./site.js";
+import "./design.js";
+import "./theme.js";
 import "./cart.js";
+import "./banners.js";
+import "./shop.js";
+import "./gallery.js";

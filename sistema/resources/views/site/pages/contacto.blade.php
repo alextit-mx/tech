@@ -12,8 +12,9 @@
     <div class="split">
         <div>
             <div class="page-head">
-                <h1>Visítanos en Plaza de la Tecnología</h1>
+                <h1>Visítanos<br />en la plaza.</h1>
             </div>
+            <p class="lede">Plaza de la Tecnología, Centro de la Ciudad de México.</p>
             <address>
                 República de Uruguay 9, entrada 1, planta baja, locales 64 y 60
                 <span>Centro, Ciudad de México</span>

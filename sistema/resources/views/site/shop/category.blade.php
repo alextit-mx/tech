@@ -3,6 +3,10 @@
 @section('title', $category->name.' | Tienda Tech Computer')
 @section('description', $category->description ?: $category->name.' con precio con IVA y existencias en Tech Computer, Plaza de la Tecnología, CDMX.')
 
+@if ($cover = $products->first(fn ($product) => $product->imageUrl()))
+    @section('og_image', $cover->imageUrl())
+@endif
+
 @section('before')
 <div class="backdrop" aria-hidden="true"></div>
 @endsection
@@ -13,19 +17,22 @@
 @endphp
 
 @section('content')
-<main class="page shop">
+<main class="page shop" data-listing>
     <nav class="crumbs" aria-label="Ruta">
         <a href="/tienda">Tienda</a>
         @if ($category->parent)<a href="{{ route('shop.category', $category->parent) }}">{{ $category->parent->name }}</a>@endif
         <span aria-current="page">{{ $category->name }}</span>
     </nav>
     <div class="page-head">
+        <p class="eyebrow">Catálogo / departamento</p>
         <h1>{{ $category->name }}</h1>
         <p class="intro">{{ $products->total() }} {{ $products->total() === 1 ? 'producto' : 'productos' }} · precios con IVA incluido</p>
     </div>
 
     <div class="shop-layout">
-        <aside class="filters" aria-label="Filtros">
+        <details class="filter-disclosure" open>
+            <summary>Filtrar y ordenar</summary>
+            <aside class="filters" aria-label="Filtros">
             @if ($category->children->isNotEmpty())
                 <div class="filter-group">
                     <h2 class="silk">Tipo</h2>
@@ -52,10 +59,11 @@
                 @endforeach
                 <h2 class="silk">Precio</h2>
                 <div class="range">
-                    <label><span class="sr-only">Mínimo</span><input type="number" name="min" min="0" step="100" placeholder="Mín." value="{{ request('min') }}" /></label>
-                    <label><span class="sr-only">Máximo</span><input type="number" name="max" min="0" step="100" placeholder="Máx." value="{{ request('max') }}" /></label>
+                    <label><span>Mínimo MXN</span><input type="number" name="min" min="0" step="100" placeholder="Mín." value="{{ request('min') }}" /></label>
+                    <label><span>Máximo MXN</span><input type="number" name="max" min="0" step="100" placeholder="Máx." value="{{ request('max') }}" /></label>
                 </div>
-                <label class="check"><input type="checkbox" name="existencia" value="1" @checked(request()->boolean('existencia')) /> Solo en existencia</label>
+                <label class="check"><input type="checkbox" name="inmediata" value="1" @checked(request()->boolean('inmediata')) /> Entrega inmediata</label>
+                <label class="check"><input type="checkbox" name="manana" value="1" @checked(request()->boolean('manana')) /> Local o en 24 h</label>
                 <label class="sort">Ordenar
                     <select name="orden">
                         <option value="">Recomendados</option>
@@ -65,13 +73,16 @@
                     </select>
                 </label>
                 <button class="btn btn-ghost btn-sm" type="submit">Aplicar</button>
+                <a class="chip filter-reset" href="{{ route('shop.category', $category) }}">Limpiar filtros</a>
             </form>
-        </aside>
+            </aside>
+        </details>
 
         <section aria-label="Productos">
             @if ($products->isEmpty())
-                <div class="empty">
-                    <p>No hay productos con esos filtros. Pregúntanos por WhatsApp: muchas piezas las conseguimos el mismo día.</p>
+                <div class="empty hud-panel">
+                    @include('site.partials.photo-pending')
+                    <h2>Sin coincidencias</h2><p>Prueba otros filtros o consulta disponibilidad.</p>
                     <a class="btn btn-primary btn-sm" data-whats="Hola Tech Computer, busco {{ $category->name }}" href="#">Preguntar por WhatsApp</a>
                 </div>
             @else

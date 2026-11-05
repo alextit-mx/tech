@@ -9,7 +9,7 @@ class QuoteItem extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = ['quote_id', 'product_id', 'sku', 'description', 'quantity', 'unit_price', 'unit_cost', 'line_total', 'sort'];
+    protected $fillable = ['quote_id', 'product_id', 'sku', 'brand', 'model', 'warranty', 'description', 'quantity', 'unit_price', 'unit_cost', 'line_total', 'sort'];
 
     protected function casts(): array
     {

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { reactive } from 'vue';
 
@@ -24,7 +26,11 @@ const f = reactive({
     new: props.filters.new === '1',
 });
 const money = (n: string | number) =>
-    '$' + Number(n).toLocaleString('es-MX', { maximumFractionDigits: 0 });
+    '$' +
+    Number(n).toLocaleString('es-MX', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 const badge: Record<string, string> = {
     draft: 'bg-zinc-500/15 text-zinc-600 dark:text-zinc-300',
     sent: 'bg-blue-500/15 text-blue-700 dark:text-blue-300',
@@ -56,28 +62,25 @@ function take(id: number) {
     <section class="p-6">
         <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
             <div>
-                <p
-                    class="font-semibold tracking-widest text-[#E30613] uppercase"
-                >
-                    Ventas
-                </p>
                 <h1 class="text-3xl font-bold">Cotizaciones</h1>
             </div>
             <Link
                 href="/admin/quotes/create"
-                class="rounded bg-[#E30613] px-4 py-2 font-semibold text-white"
+                class="rounded bg-primary px-4 py-2 font-semibold text-primary-foreground"
                 >Nueva cotización</Link
             >
         </div>
 
         <div class="mb-4 flex flex-wrap items-center gap-2">
-            <input
+            <Input
+                aria-label="Folio, cliente, teléfono o build"
                 v-model="f.search"
                 placeholder="Folio, cliente, teléfono o build"
                 class="w-72 rounded-md border px-3 py-2"
                 @keyup.enter="apply"
             />
             <select
+                aria-label="Estado"
                 v-model="f.status"
                 class="rounded-md border px-3 py-2"
                 @change="apply"
@@ -92,6 +95,7 @@ function take(id: number) {
                 </option>
             </select>
             <select
+                aria-label="Origen"
                 v-model="f.source"
                 class="rounded-md border px-3 py-2"
                 @change="apply"
@@ -107,13 +111,17 @@ function take(id: number) {
             >
             <label
                 class="flex items-center gap-2 text-sm"
-                :class="{ 'font-semibold text-[#E30613]': newCount }"
+                :class="{ 'font-semibold text-foreground': newCount }"
                 ><input v-model="f.new" type="checkbox" @change="apply" />
                 Nuevas sin atender ({{ newCount }})</label
             >
-            <button class="rounded border px-3 py-2" @click="apply">
+            <Button
+                variant="outline"
+                class="rounded border px-3 py-2"
+                @click="apply"
+            >
                 Buscar
-            </button>
+            </Button>
         </div>
 
         <div class="overflow-x-auto rounded-lg border">
@@ -171,13 +179,13 @@ function take(id: number) {
                             }}
                         </td>
                         <td class="p-3 text-right">
-                            <button
+                            <Button
                                 v-if="!q.user_id"
-                                class="rounded bg-[#E30613] px-3 py-1 text-white"
+                                class="rounded bg-primary px-3 py-1 text-primary-foreground"
                                 @click="take(q.id)"
                             >
                                 Tomar
-                            </button>
+                            </Button>
                         </td>
                     </tr>
                     <tr v-if="!quotes.data.length">
@@ -198,7 +206,9 @@ function take(id: number) {
                     v-if="link.url"
                     :href="link.url"
                     class="rounded border px-3 py-1 text-sm"
-                    :class="{ 'bg-[#E30613] text-white': link.active }"
+                    :class="{
+                        'bg-primary text-primary-foreground': link.active,
+                    }"
                     preserve-scroll
                     ><span v-html="link.label"
                 /></Link>

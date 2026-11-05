@@ -11,5 +11,7 @@ if (root && data) {
         parts: Part[];
         extras: Extra[];
     };
-    createApp(BuildLab, { catalog }).mount(root);
+    createApp(BuildLab, { catalog, staff: root.dataset.staff === '1' }).mount(
+        root,
+    );
 }

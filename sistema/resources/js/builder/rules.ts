@@ -1,3 +1,4 @@
+import chipsets from './chipsets.json';
 /*
  * Reglas del configurador. Las mismas viven en PHP (App\Support\BuildValidator), que revalida al cotizar.
  */
@@ -29,6 +30,7 @@ export interface Part {
     stock: 'ok' | 'low' | 'none';
     stockLabel: string;
     specs: Specs;
+    estimated?: string[];
     url: string;
 }
 
@@ -72,78 +74,318 @@ const str = (value: Specs[string]): string =>
 const list = (value: Specs[string]): string[] =>
     Array.isArray(value) ? value.map(String) : [];
 
+/** Memoria que acepta cada plataforma: decide la RAM cuando aún no hay tarjeta madre (LGA1700 acepta ambas). */
+const PLATFORM_MEMORY: Record<string, string[]> = {
+    AM5: ['DDR5'],
+    LGA1851: ['DDR5'],
+    sTR5: ['DDR5'],
+    AM4: ['DDR4'],
+    LGA1200: ['DDR4'],
+    LGA1151: ['DDR4'],
+    LGA1700: ['DDR4', 'DDR5'],
+};
 export function hasIgpu(build: Build): boolean {
     return build.cpu?.specs.igpu === true;
 }
 
-/** Motivo por el que `part` no entra en la build actual, o null si es compatible. */
-export function incompatibility(part: Part, build: Build): string | null {
-    const { cpu, motherboard: mb, ram, gpu, cooler } = build;
-    const box = build.case;
-    const s = part.specs;
-    switch (part.slot) {
-        case 'cpu':
-            if (mb && s.socket !== mb.specs.socket)
-                return `Socket ${str(s.socket)} ≠ ${str(mb.specs.socket)} de tu tarjeta madre`;
-            if (
-                cooler &&
-                !list(cooler.specs.sockets).includes(String(s.socket))
+export type Issue = {
+    level: 'incompatible' | 'riesgo' | 'desbalance';
+    code: string;
+    message: string;
+    slots: Slot[];
+};
+export type CompatibilityParts = Partial<
+    Record<Slot, { specs: Specs; estimated?: string[] }>
+>;
+
+export function issues(build: CompatibilityParts): Issue[] {
+    const out: Issue[] = [];
+    const cpu = build.cpu?.specs ?? {},
+        mb = build.motherboard?.specs ?? {},
+        ram = build.ram?.specs ?? {};
+    const gpu = build.gpu?.specs ?? {},
+        psu = build.psu?.specs ?? {},
+        cooler = build.cooler?.specs ?? {},
+        box = build.case?.specs ?? {};
+    const has = (s: Specs, key: string) =>
+        s[key] !== undefined && s[key] !== null;
+    const add = (
+        level: Issue['level'],
+        code: string,
+        message: string,
+        fields: Partial<Record<Slot, string[]>>,
+    ) => {
+        const slots = Object.keys(fields) as Slot[];
+        if (
+            level === 'incompatible' &&
+            slots.some((slot) =>
+                fields[slot]?.some((key) =>
+                    build[slot]?.estimated?.includes(key),
+                ),
             )
-                return `Tu disipador no es para ${str(s.socket)}`;
-            if (cooler && num(s.tdp_w) > num(cooler.specs.max_tdp_w))
-                return `Pide ${str(s.tdp_w)} W; tu disipador llega a ${str(cooler.specs.max_tdp_w)} W`;
-            return null;
-        case 'motherboard':
-            if (cpu && s.socket !== cpu.specs.socket)
-                return `Socket ${str(s.socket)} ≠ ${str(cpu.specs.socket)}`;
-            if (ram && s.memory_type !== ram.specs.memory_type)
-                return `Usa ${str(s.memory_type)}; tu memoria es ${str(ram.specs.memory_type)}`;
-            if (
-                box &&
-                !list(box.specs.form_factors).includes(String(s.form_factor))
-            )
-                return `${str(s.form_factor)} no cabe en tu gabinete`;
-            return null;
-        case 'ram':
-            if (mb && s.memory_type !== mb.specs.memory_type)
-                return `${str(s.memory_type)} no entra en una tarjeta ${str(mb.specs.memory_type)}`;
-            return null;
-        case 'gpu':
-            if (box && num(s.length_mm) > num(box.specs.max_gpu_length_mm))
-                return `Mide ${str(s.length_mm)} mm; tu gabinete admite ${str(box.specs.max_gpu_length_mm)} mm`;
-            return null;
-        case 'cooler':
-            if (cpu && !list(s.sockets).includes(String(cpu.specs.socket)))
-                return `No es para socket ${str(cpu.specs.socket)}`;
-            if (cpu && num(cpu.specs.tdp_w) > num(s.max_tdp_w))
-                return `Disipa ${str(s.max_tdp_w)} W; tu procesador pide ${str(cpu.specs.tdp_w)} W`;
-            return null;
-        case 'case':
-            if (
-                mb &&
-                !list(s.form_factors).includes(String(mb.specs.form_factor))
-            )
-                return `No admite tarjetas ${str(mb.specs.form_factor)}`;
-            if (gpu && num(gpu.specs.length_mm) > num(s.max_gpu_length_mm))
-                return `Tu tarjeta de video mide ${str(gpu.specs.length_mm)} mm; aquí caben ${str(s.max_gpu_length_mm)} mm`;
-            return null;
-        case 'psu':
-            if (num(s.watts) < consumption(build))
-                return `${str(s.watts)} W no alcanza para ${consumption(build)} W`;
-            return null;
-        default:
-            return null;
+        ) {
+            level = 'riesgo';
+            message += ' (dato por confirmar)';
+        }
+        out.push({ level, code, message, slots });
+    };
+    const power = has(cpu, 'power_w')
+        ? num(cpu.power_w)
+        : num(cpu.tdp_w) * 1.35;
+    const powerText = String(Number(power.toFixed(10)));
+    const powerField = has(cpu, 'power_w') ? 'power_w' : 'tdp_w';
+    const platform = PLATFORM_MEMORY[str(cpu.socket)] ?? [];
+    if (has(cpu, 'socket') && has(mb, 'socket') && cpu.socket !== mb.socket)
+        add(
+            'incompatible',
+            'socket',
+            `El procesador es ${str(cpu.socket)} y la tarjeta madre ${str(mb.socket)}.`,
+            { cpu: ['socket'], motherboard: ['socket'] },
+        );
+    if (
+        build.ram &&
+        !build.motherboard &&
+        platform.length &&
+        !platform.includes(str(ram.memory_type))
+    )
+        add(
+            'incompatible',
+            'socket',
+            `El procesador ${str(cpu.socket)} usa ${platform.join(' o ')}, no ${str(ram.memory_type) || 'memoria desconocida'}.`,
+            { cpu: ['socket'], ram: ['memory_type'] },
+        );
+    if (
+        has(ram, 'memory_type') &&
+        has(mb, 'memory_type') &&
+        ram.memory_type !== mb.memory_type
+    )
+        add(
+            'incompatible',
+            'memory_type',
+            `La memoria ${str(ram.memory_type)} no entra en una tarjeta ${str(mb.memory_type)}.`,
+            { ram: ['memory_type'], motherboard: ['memory_type'] },
+        );
+    if (
+        has(mb, 'form_factor') &&
+        has(box, 'form_factors') &&
+        !list(box.form_factors).includes(str(mb.form_factor))
+    )
+        add(
+            'incompatible',
+            'form_factor',
+            `La tarjeta madre ${str(mb.form_factor)} no cabe en el gabinete.`,
+            { motherboard: ['form_factor'], case: ['form_factors'] },
+        );
+    if (
+        has(ram, 'modules') &&
+        has(mb, 'ram_slots') &&
+        num(ram.modules) > num(mb.ram_slots)
+    )
+        add(
+            'incompatible',
+            'ram_slots',
+            `La RAM tiene ${str(ram.modules)} módulos y la tarjeta madre solo ${str(mb.ram_slots)} ranuras.`,
+            { ram: ['modules'], motherboard: ['ram_slots'] },
+        );
+    if (
+        has(ram, 'capacity_gb') &&
+        has(mb, 'max_ram_gb') &&
+        num(ram.capacity_gb) > num(mb.max_ram_gb)
+    )
+        add(
+            'incompatible',
+            'ram_max',
+            `La RAM suma ${str(ram.capacity_gb)} GB y la tarjeta madre admite ${str(mb.max_ram_gb)} GB.`,
+            { ram: ['capacity_gb'], motherboard: ['max_ram_gb'] },
+        );
+    const chip = (
+        chipsets as Record<
+            string,
+            {
+                socket: string;
+                class: number;
+                supported: string[];
+                bios: string[];
+            }
+        >
+    )[str(mb.chipset)];
+    if (chip && has(cpu, 'series')) {
+        if (chip.bios.includes(str(cpu.series)))
+            add(
+                'riesgo',
+                'chipset_cpu',
+                `El chipset ${str(mb.chipset)} requiere verificar o actualizar el BIOS para ${str(cpu.series)}.`,
+                { cpu: ['series'], motherboard: ['chipset'] },
+            );
+        else if (!chip.supported.includes(str(cpu.series)))
+            add(
+                'incompatible',
+                'chipset_cpu',
+                `El chipset ${str(mb.chipset)} no soporta ${str(cpu.series)}.`,
+                { cpu: ['series'], motherboard: ['chipset'] },
+            );
+        const limit =
+            ({ 1: 88, 2: 142, 3: 200 } as Record<number, number>)[chip.class] ??
+            Infinity;
+        if (chip.class < num(cpu.tier) - 2 || power > limit)
+            add(
+                'desbalance',
+                'board_class',
+                `El chipset ${str(mb.chipset)} (clase ${chip.class}) queda corto para el procesador de nivel ${num(cpu.tier)} y ${powerText} W máximos.`,
+                { cpu: ['tier', 'power_w', 'tdp_w'], motherboard: ['chipset'] },
+            );
     }
+    if (
+        has(cpu, 'socket') &&
+        has(cooler, 'sockets') &&
+        !list(cooler.sockets).includes(str(cpu.socket))
+    )
+        add(
+            'incompatible',
+            'cooler_socket',
+            `El enfriamiento no es para socket ${str(cpu.socket)}.`,
+            { cpu: ['socket'], cooler: ['sockets'] },
+        );
+    if (build.cpu && has(cooler, 'max_tdp_w') && num(cooler.max_tdp_w) < power)
+        add(
+            'incompatible',
+            'cooler_power',
+            `El enfriamiento disipa ${str(cooler.max_tdp_w)} W y el procesador puede consumir ${powerText} W.`,
+            { cpu: [powerField], cooler: ['max_tdp_w'] },
+        );
+    if (has(gpu, 'length_mm') && has(box, 'max_gpu_length_mm')) {
+        const gap = num(box.max_gpu_length_mm) - num(gpu.length_mm);
+        if (gap < 10)
+            add(
+                gap < 0 ? 'incompatible' : 'riesgo',
+                'gpu_length',
+                `La tarjeta de video mide ${str(gpu.length_mm)} mm y el gabinete admite ${str(box.max_gpu_length_mm)} mm.${gap >= 0 ? ` Solo quedan ${gap} mm de margen.` : ''}`,
+                { gpu: ['length_mm'], case: ['max_gpu_length_mm'] },
+            );
+    }
+    const consumption = power + num(gpu.tdp_w) + 75,
+        minimum = Number(
+            Math.max(num(gpu.recommended_psu_w), consumption).toFixed(10),
+        ),
+        ideal = Math.ceil((consumption * 1.25) / 50) * 50;
+    if (has(psu, 'watts')) {
+        if (num(psu.watts) < minimum)
+            add(
+                'incompatible',
+                'psu_watts',
+                `La fuente entrega ${str(psu.watts)} W y el armado requiere al menos ${minimum} W.`,
+                {
+                    cpu: [powerField],
+                    gpu: ['tdp_w', 'recommended_psu_w'],
+                    psu: ['watts'],
+                },
+            );
+        else if (num(psu.watts) < ideal)
+            add(
+                'desbalance',
+                'psu_watts',
+                `La fuente entrega ${str(psu.watts)} W; se recomiendan ${ideal} W para tener margen.`,
+                { psu: ['watts'], cpu: ['power_w'], gpu: ['tdp_w'] },
+            );
+    }
+    if (build.psu && build.gpu) {
+        const cert = str(psu.certification) || 'Sin certificación';
+        if (cert === 'Sin certificación' && num(gpu.tdp_w) > 150)
+            add(
+                'incompatible',
+                'psu_quality',
+                `La fuente sin certificación no es adecuada para una tarjeta de video de ${str(gpu.tdp_w)} W.`,
+                { psu: ['certification'], gpu: ['tdp_w'] },
+            );
+        else if (
+            num(gpu.tier) >= 4 &&
+            !['80+ Gold', '80+ Platinum', '80+ Titanium'].includes(cert)
+        )
+            add(
+                'desbalance',
+                'psu_quality',
+                `La tarjeta de video de nivel ${str(gpu.tier)} requiere una fuente 80+ Gold o superior; la actual es ${cert}.`,
+                { gpu: ['tier'], psu: ['certification'] },
+            );
+        const connector = str(gpu.power_connector) || 'ninguno',
+            eight = num(psu.pcie_8pin),
+            required =
+                (
+                    { '8-pin': 1, '2x8-pin': 2, '3x8-pin': 3 } as Record<
+                        string,
+                        number
+                    >
+                )[connector] ?? 0;
+        if (required > eight)
+            add(
+                'incompatible',
+                'gpu_power_connector',
+                `La tarjeta de video requiere ${required} conectores de 8 pines y la fuente tiene ${eight}.`,
+                { gpu: ['power_connector'], psu: ['pcie_8pin'] },
+            );
+        if (connector === '16-pin' && !psu.pcie_16pin) {
+            const needed = Math.ceil(num(gpu.tdp_w) / 150),
+                adapter = eight >= needed;
+            add(
+                adapter ? 'riesgo' : 'incompatible',
+                'gpu_power_connector',
+                `La tarjeta de video usa 16 pines y la fuente no tiene conector nativo. ${adapter ? `Funciona con el adaptador de la tarjeta y ${needed} conectores de 8 pines.` : `Necesita ${needed} conectores de 8 pines para el adaptador y la fuente tiene ${eight}.`}`,
+                {
+                    gpu: ['power_connector', 'tdp_w'],
+                    psu: ['pcie_16pin', 'pcie_8pin'],
+                },
+            );
+        }
+    }
+    if (box.includes_psu) {
+        if (build.psu)
+            add(
+                'desbalance',
+                'case_has_psu',
+                'El gabinete incluye fuente y elegiste otra: pagas dos fuentes.',
+                { case: ['includes_psu'], psu: ['watts'] },
+            );
+        else if (num(gpu.tdp_w) > 75)
+            add(
+                'incompatible',
+                'case_has_psu',
+                `La fuente incluida del gabinete no está confirmada para una tarjeta de video de ${str(gpu.tdp_w)} W.`,
+                { case: ['includes_psu'], gpu: ['tdp_w'] },
+            );
+    }
+    if (!build.gpu && cpu.igpu === false)
+        add(
+            'incompatible',
+            'no_video',
+            'El procesador no tiene gráficos integrados y falta una tarjeta de video.',
+            { cpu: ['igpu'], gpu: [] },
+        );
+    return out;
+}
+
+export function incompatibility(part: Part, build: Build): string | null {
+    return (
+        issues({ ...build, [part.slot]: part }).find(
+            (issue) =>
+                issue.level === 'incompatible' &&
+                issue.slots.includes(part.slot),
+        )?.message ?? null
+    );
 }
 
 export function consumption(build: Build): number {
-    return num(build.cpu?.specs.tdp_w) + num(build.gpu?.specs.tdp_w) + 75;
+    return Math.ceil(
+        num(build.cpu?.specs.power_w ?? num(build.cpu?.specs.tdp_w) * 1.35) +
+            num(build.gpu?.specs.tdp_w) +
+            75,
+    );
 }
-
 export function recommendedPsu(build: Build): number {
-    return Math.ceil((consumption(build) * 1.4) / 50) * 50;
+    return Math.max(
+        num(build.gpu?.specs.recommended_psu_w),
+        Math.ceil((consumption(build) * 1.25) / 50) * 50,
+    );
 }
-
 export function requiredSlots(build: Build): Slot[] {
     const slots: Slot[] = [
         'cpu',
@@ -153,49 +395,13 @@ export function requiredSlots(build: Build): Slot[] {
         'psu',
         'case',
     ];
-    return hasIgpu(build)
-        ? slots
-        : [...slots.slice(0, 3), 'gpu', ...slots.slice(3)];
+    return hasIgpu(build) ? slots : [...slots, 'gpu'];
 }
-
 export function missingSlots(build: Build): Slot[] {
     return requiredSlots(build).filter((slot) => !build[slot]);
 }
-
-/** Avisos de la build completa: incompatibilidades (bloquean) y fuente justa (solo aviso). */
-export function warnings(
-    build: Build,
-): { slot: Slot; message: string; blocking: boolean }[] {
-    const out: { slot: Slot; message: string; blocking: boolean }[] = [];
-    for (const slot of SLOTS) {
-        const part = build[slot];
-        if (!part) continue;
-        const reason = incompatibility(part, build);
-        if (reason) out.push({ slot, message: reason, blocking: true });
-    }
-    if (!build.gpu && build.cpu && !hasIgpu(build))
-        out.push({
-            slot: 'gpu',
-            message:
-                'Tu procesador no tiene gráficos integrados: elige una tarjeta de video',
-            blocking: true,
-        });
-    const psu = build.psu;
-    if (
-        psu &&
-        num(psu.specs.watts) >= consumption(build) &&
-        num(psu.specs.watts) < recommendedPsu(build)
-    ) {
-        out.push({
-            slot: 'psu',
-            message: `Funciona, pero lo ideal son ${recommendedPsu(build)} W o más`,
-            blocking: false,
-        });
-    }
-    // Una sola vez por par de piezas (cpu↔mb aparece en las dos).
-    return out.filter(
-        (w, i) => out.findIndex((o) => o.message === w.message) === i,
-    );
+export function warnings(build: Build): Issue[] {
+    return issues(build).filter((issue) => issue.level !== 'incompatible');
 }
 
 /** Nivel de poder 0–100: la tarjeta de video pesa más que el procesador. */
@@ -316,103 +522,3 @@ export const BUDGETS = {
     extrema: 'Extrema',
 } as const;
 export type Budget = keyof typeof BUDGETS;
-
-const TARGETS: Record<Use, Record<Budget, [number, number]>> = {
-    gaming1080: {
-        esencial: [1, 1],
-        equilibrada: [2, 2],
-        alta: [3, 3],
-        extrema: [4, 4],
-    },
-    gaming1440: {
-        esencial: [2, 2],
-        equilibrada: [3, 3],
-        alta: [4, 4],
-        extrema: [4, 5],
-    },
-    gaming4k: {
-        esencial: [3, 3],
-        equilibrada: [4, 4],
-        alta: [4, 5],
-        extrema: [5, 6],
-    },
-    stream: {
-        esencial: [2, 2],
-        equilibrada: [3, 3],
-        alta: [4, 4],
-        extrema: [5, 5],
-    },
-    create: {
-        esencial: [2, 1],
-        equilibrada: [3, 2],
-        alta: [4, 3],
-        extrema: [5, 5],
-    },
-    office: {
-        esencial: [1, 0],
-        equilibrada: [1, 0],
-        alta: [2, 0],
-        extrema: [3, 1],
-    },
-};
-const MEMORY: Record<Budget, number> = {
-    esencial: 16,
-    equilibrada: 32,
-    alta: 32,
-    extrema: 64,
-};
-const STORAGE_GB: Record<Budget, number> = {
-    esencial: 1000,
-    equilibrada: 1000,
-    alta: 2000,
-    extrema: 4000,
-};
-
-/** Precio para ordenar: lo que se cotiza va al final. */
-const cost = (p: Part) => p.price ?? 1e9;
-const cheapest = (parts: Part[]) =>
-    [...parts].sort((a, b) => cost(a) - cost(b))[0];
-
-function pickAtLeast(
-    parts: Part[],
-    key: string,
-    target: number,
-): Part | undefined {
-    const enough = parts.filter((p) => num(p.specs[key]) >= target);
-    return enough.length
-        ? cheapest(enough)
-        : [...parts].sort((a, b) => num(b.specs[key]) - num(a.specs[key]))[0];
-}
-
-export function recommend(all: Part[], use: Use, budget: Budget): Build {
-    const of = (slot: Slot) => all.filter((p) => p.slot === slot);
-    const [cpuTier, gpuTier] = TARGETS[use][budget];
-    const build: Build = {};
-
-    build.cpu =
-        pickAtLeast(
-            gpuTier === 0
-                ? of('cpu').filter((p) => p.specs.igpu === true)
-                : of('cpu'),
-            'tier',
-            cpuTier,
-        ) ?? pickAtLeast(of('cpu'), 'tier', cpuTier);
-    if (gpuTier > 0 || !hasIgpu(build))
-        build.gpu = pickAtLeast(of('gpu'), 'tier', Math.max(1, gpuTier));
-
-    const fits = (slot: Slot) =>
-        of(slot).filter((p) => !incompatibility(p, build));
-    build.motherboard = cheapest(fits('motherboard'));
-    build.ram = pickAtLeast(fits('ram'), 'capacity_gb', MEMORY[budget]);
-    build.storage =
-        pickAtLeast(
-            of('storage').filter((p) => p.specs.type !== 'HDD'),
-            'capacity_gb',
-            STORAGE_GB[budget],
-        ) ?? pickAtLeast(of('storage'), 'capacity_gb', STORAGE_GB[budget]);
-    build.case = cheapest(fits('case'));
-    build.cooler = cheapest(fits('cooler'));
-    build.psu = pickAtLeast(of('psu'), 'watts', recommendedPsu(build));
-    for (const slot of SLOTS) if (!build[slot]) delete build[slot];
-    return build;
-}

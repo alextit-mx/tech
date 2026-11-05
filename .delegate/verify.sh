@@ -20,5 +20,6 @@ if [[ $what == all || $what == check ]]; then
 fi
 if [[ $what == all || $what == test ]]; then
     vendor/bin/pint > /dev/null 2>&1
+    grep -q '"test:js"' package.json && { npm run test:js > /tmp/v-js.log 2>&1; echo "test:js: $?"; grep -E 'FAIL|✗|×|Tests ' /tmp/v-js.log | head -15; }
     php artisan test 2>&1 | grep -E 'FAIL|⨯|Tests:|Error|Exception' | head -30
 fi

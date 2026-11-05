@@ -18,7 +18,7 @@
             '@type' => 'Offer',
             'priceCurrency' => 'MXN',
             'price' => number_format($price, 2, '.', ''),
-            'availability' => $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/BackOrder',
+            'availability' => ($product->stock > 0 || $product->stock_24h > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             'url' => route('shop.product', $product),
             'seller' => ['@type' => 'Organization', 'name' => 'Tech Computer'],
         ] : null,
@@ -49,37 +49,65 @@
     </nav>
 
     <article class="product">
-        <div class="gallery" data-gallery>
-            <div class="gallery-main">
+        {{-- Galería sin ampliación automática; conserva flechas, miniaturas y pantalla completa. --}}
+        <div class="gallery" @if ($product->images->isNotEmpty()) data-gallery data-autoplay-interval="4500" @endif>
+            <div @class(['gallery-main', 'showcase', 'is-pending' => $product->images->isEmpty()]) @if ($product->images->isNotEmpty()) data-gallery-stage aria-roledescription="carrusel" aria-label="Fotos de {{ $fullName }}" @endif>
+                @forelse ($product->images as $image)
+                    <figure class="g-slide {{ $loop->first ? 'is-active' : '' }}" @unless ($loop->first) aria-hidden="true" @endunless>
+                        <img src="{{ asset('uploads/'.$image->path) }}" alt="{{ $fullName }}{{ $loop->count > 1 ? ' · foto '.$loop->iteration : '' }}" width="800" height="800" @unless ($loop->first) loading="lazy" @endunless />
+                    </figure>
+                @empty
+                    @include('site.partials.photo-pending')
+                @endforelse
                 @if ($product->images->isNotEmpty())
-                    <img src="{{ asset('uploads/'.$product->images->first()->path) }}" alt="{{ $fullName }}" width="800" height="800" data-gallery-main />
-                @else
-                    <img class="p-placeholder" src="/img/ats-emblema.png" alt="" width="240" height="240" />
+                    <button class="g-expand" type="button" data-gallery-open aria-label="Ver en pantalla completa">⤢</button>
+                @endif
+                @if ($product->images->count() > 1)
+                    <button class="g-arrow prev" type="button" data-gallery-prev aria-label="Foto anterior">‹</button>
+                    <button class="g-arrow next" type="button" data-gallery-next aria-label="Foto siguiente">›</button>
+                    <span class="g-count" aria-live="polite"><b data-gallery-index>1</b> / {{ $product->images->count() }}</span>
+                    <span class="carousel-progress" aria-hidden="true"><i data-carousel-progress></i></span>
                 @endif
             </div>
             @if ($product->images->count() > 1)
-                <div class="gallery-thumbs">
+                <button class="carousel-pause" type="button" data-carousel-pause aria-pressed="false" aria-label="Pausar carrusel"><span>Pausar</span></button>
+                <div class="gallery-thumbs" role="tablist" aria-label="Elegir foto">
                     @foreach ($product->images as $image)
-                        <button type="button" data-gallery-thumb="{{ asset('uploads/'.$image->path) }}" aria-label="Ver foto {{ $loop->iteration }}"><img src="{{ asset('uploads/'.$image->path) }}" alt="" width="96" height="96" loading="lazy" /></button>
+                        <button class="showcase" type="button" role="tab" data-gallery-go="{{ $loop->index }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" aria-label="Ver foto {{ $loop->iteration }}"><img src="{{ asset('uploads/'.$image->path) }}" alt="" width="96" height="96" loading="lazy" /></button>
                     @endforeach
                 </div>
+            @endif
+            @if ($product->images->isNotEmpty())
+                <dialog class="lightbox" data-lightbox aria-label="Fotos de {{ $fullName }}">
+                    <div class="lightbox-vitrine showcase"><img src="" alt="" data-lightbox-img /></div>
+                    <button class="lb-close" type="button" data-lightbox-close aria-label="Cerrar">×</button>
+                    @if ($product->images->count() > 1)
+                        <button class="lb-arrow prev" type="button" data-lightbox-prev aria-label="Foto anterior">‹</button>
+                        <button class="lb-arrow next" type="button" data-lightbox-next aria-label="Foto siguiente">›</button>
+                    @endif
+                    <p class="lb-hint">Usa las flechas para cambiar de foto · Esc para cerrar</p>
+                </dialog>
             @endif
         </div>
 
         <div class="product-info">
-            <span class="silk">SKU {{ $product->sku }}</span>
-            <h1>@if ($product->brand)<span class="p-brand">{{ $product->brand->name }}</span> @endif{{ $product->name }}</h1>
-            @if ($product->short_description)<p class="lede">{{ $product->short_description }}</p>@endif
+            <p class="eyebrow">{{ $product->brand?->name ?? $product->category->name }}</p>
+            <h1>{{ $product->name }}</h1>
+            <p class="product-meta"><span class="silk">SKU {{ $product->sku }}</span></p>
 
-            <div class="buy-box">
+            <div class="buy-box hud-panel">
                 @if ($price !== null)
                     <p class="p-price big">{{ money($price) }}<small>IVA incluido</small></p>
                 @else
                     <p class="p-price big is-quote">Cotizar<small>Te damos el precio del día por WhatsApp</small></p>
                 @endif
-                <p class="stock" data-level="{{ $product->stock > 3 ? 'ok' : ($product->stock > 0 ? 'low' : 'none') }}">{{ $product->stockLabel() }}</p>
+                <p class="stock" data-level="{{ $product->stockLevel() }}">{{ $product->stockLabel() }}</p>
+                <dl class="stock-breakdown">
+                    <div><dt class="silk">En el local</dt><dd>{{ $product->stock }} {{ $product->stock === 1 ? 'pieza' : 'piezas' }}</dd></div>
+                    <div><dt class="silk">En 24 h</dt><dd>{{ $product->stock_24h }} {{ $product->stock_24h === 1 ? 'pieza' : 'piezas' }}</dd></div>
+                </dl>
                 <div class="qty-row">
-                    <label>Cantidad <input type="number" min="1" max="99" value="1" data-qty /></label>
+                    <label>Cantidad <input type="number" name="quantity" inputmode="numeric" min="1" max="99" value="1" data-qty /></label>
                     <button class="btn btn-primary" type="button" data-add-to-cart="{{ $product->id }}" data-name="{{ $product->name }}">Agregar a mi cotización</button>
                 </div>
                 <a class="btn btn-ghost btn-sm" data-whats="Hola Tech Computer, me interesa {{ $fullName }} (SKU {{ $product->sku }}): {{ route('shop.product', $product) }}" href="#">Preguntar por WhatsApp</a>
@@ -89,34 +117,43 @@
             </div>
 
             @if ($specs->isNotEmpty())
-                <section class="spec-sheet" aria-label="Ficha técnica">
+                <section class="spec-sheet hud-panel" aria-label="Ficha técnica">
                     <h2 class="silk">Ficha técnica</h2>
-                    <dl>
+                    <table><caption class="sr-only">Especificaciones de {{ $product->name }}</caption><tbody>
                         @foreach ($specs as [$label, $value])
-                            <div><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>
+                            <tr><th scope="row" class="silk">{{ $label }}</th><td>{{ $value }}</td></tr>
                         @endforeach
-                    </dl>
+                    </tbody></table>
                 </section>
             @endif
         </div>
     </article>
 
-    @if ($product->description)
-        <section class="section prose">
-            <h2>Descripción</h2>
-            {!! nl2br(e($product->description)) !!}
+    @if ($product->description || $product->short_description)
+        <details class="product-description hud-panel">
+            <summary>Detalles del producto</summary>
+            <div>@if ($product->short_description)<p>{{ $product->short_description }}</p>@endif
+            @if ($product->description)<p>{!! nl2br(e($product->description)) !!}</p>@endif</div>
+        </details>
+    @endif
+
+    @if ($complete->isNotEmpty())
+        @include('site.partials.rail', ['id' => 'completa', 'eyebrow' => 'Compatibles con esta pieza', 'title' => 'Completa tu equipo', 'link' => null, 'items' => $complete])
+    @endif
+
+    @if ($builds->isNotEmpty())
+        <section class="section">
+            <header class="rail-head"><div><p class="eyebrow">Ya armados</p><h2>Equipos que la incluyen</h2></div></header>
+            <div class="b-grid">
+                @foreach ($builds as $build)
+                    @include('site.partials.build-card')
+                @endforeach
+            </div>
         </section>
     @endif
 
     @if ($related->isNotEmpty())
-        <section class="section">
-            <h2>También en {{ $product->category->name }}</h2>
-            <div class="p-grid">
-                @foreach ($related as $product)
-                    @include('site.partials.product-card')
-                @endforeach
-            </div>
-        </section>
+        @include('site.partials.rail', ['id' => 'similares', 'eyebrow' => $product->category->name, 'title' => 'Similares', 'link' => route('shop.category', $product->category), 'items' => $related])
     @endif
 </main>
 @endsection
